@@ -1,2 +1,2 @@
-export { ComponentNameElement } from './COMPONENT-NAME.js';
+export { TableSortableElement } from './table-sortable.js';
 import './define.js';

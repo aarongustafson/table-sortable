@@ -1,3 +1,3 @@
-import { ComponentNameElement } from './COMPONENT-NAME.js';
+import { TableSortableElement } from './table-sortable.js';
 
-customElements.define('COMPONENT-NAME', ComponentNameElement);
+customElements.define('table-sortable', TableSortableElement);

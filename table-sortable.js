@@ -1,17 +1,17 @@
 /**
- * ComponentNameElement - COMPONENT_DESCRIPTION
+ * TableSortableElement - A web component to enable users to sort the data in a table based on table cell values.
  *
- * @element COMPONENT-NAME
+ * @element table-sortable
  *
  * @attr {string} example-attribute - Description of the attribute
  *
- * @fires COMPONENT-NAME:event-name - Description of the event
+ * @fires table-sortable:event-name - Description of the event
  *
  * @slot - Default slot for content
  *
  * @cssprop --component-name-color - Description of CSS custom property
  */
-export class ComponentNameElement extends HTMLElement {
+export class TableSortableElement extends HTMLElement {
 	static get observedAttributes() {
 		return ['example-attribute'];
 	}

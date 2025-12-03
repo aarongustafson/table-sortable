@@ -4,29 +4,29 @@
 	"modules": [
 		{
 			"kind": "javascript-module",
-			"path": "COMPONENT-NAME.js",
+			"path": "table-sortable.js",
 			"declarations": [
 				{
 					"kind": "class",
-					"description": "COMPONENT_DESCRIPTION",
-					"name": "ComponentNameElement",
+					"description": "A web component to enable users to sort the data in a table based on table cell values.",
+					"name": "TableSortableElement",
 					"members": [],
 					"events": [],
 					"attributes": [],
 					"superclass": {
 						"name": "HTMLElement"
 					},
-					"tagName": "COMPONENT-NAME",
+					"tagName": "table-sortable",
 					"customElement": true
 				}
 			],
 			"exports": [
 				{
 					"kind": "js",
-					"name": "ComponentNameElement",
+					"name": "TableSortableElement",
 					"declaration": {
-						"name": "ComponentNameElement",
-						"module": "COMPONENT-NAME.js"
+						"name": "TableSortableElement",
+						"module": "table-sortable.js"
 					}
 				}
 			]

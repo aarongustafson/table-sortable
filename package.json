@@ -1,7 +1,7 @@
 {
-	"name": "@aarongustafson/COMPONENT-NAME",
+	"name": "@aarongustafson/table-sortable",
 	"version": "0.0.1",
-	"description": "COMPONENT_DESCRIPTION",
+	"description": "A web component to enable users to sort the data in a table based on table cell values.",
 	"keywords": [
 		"html",
 		"custom element",
@@ -9,24 +9,24 @@
 	],
 	"author": "Aaron Gustafson <aaron@easy-designs.net> (https://www.aaron-gustafson.com/)",
 	"license": "MIT",
-	"homepage": "https://github.com/aarongustafson/COMPONENT-NAME#readme",
+	"homepage": "https://github.com/aarongustafson/table-sortable#readme",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/aarongustafson/COMPONENT-NAME.git"
+		"url": "git+https://github.com/aarongustafson/table-sortable.git"
 	},
 	"bugs": {
-		"url": "https://github.com/aarongustafson/COMPONENT-NAME/issues"
+		"url": "https://github.com/aarongustafson/table-sortable/issues"
 	},
 	"type": "module",
 	"main": "index.js",
-	"module": "COMPONENT-NAME.js",
+	"module": "table-sortable.js",
 	"customElements": "custom-elements.json",
 	"exports": {
 		".": {
 			"import": "./index.js"
 		},
-		"./COMPONENT-NAME.js": {
-			"import": "./COMPONENT-NAME.js"
+		"./table-sortable.js": {
+			"import": "./table-sortable.js"
 		},
 		"./define.js": {
 			"import": "./define.js"
@@ -34,7 +34,7 @@
 		"./custom-elements.json": "./custom-elements.json"
 	},
 	"files": [
-		"COMPONENT-NAME.js",
+		"table-sortable.js",
 		"define.js",
 		"index.js",
 		"custom-elements.json",
