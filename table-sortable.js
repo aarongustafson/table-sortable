@@ -14,11 +14,59 @@
  * @attr {string} label-ascending - Custom label for ascending sort (default: "sorted ascending. Click to sort descending")
  * @attr {string} label-descending - Custom label for descending sort (default: "sorted descending. Click to sort ascending")
  *
- * @cssprop --sort-indicator-asc - Ascending sort indicator (default: ↑)
- * @cssprop --sort-indicator-desc - Descending sort indicator (default: ↓)
- * @cssprop --table-sortable-active-color - Color for active sort indicators
+ * @cssprop --table-sortable-indicator-asc - Ascending sort indicator (default: ↑)
+ * @cssprop --table-sortable-indicator-desc - Descending sort indicator (default: ↓)
  */
 export class TableSortableElement extends HTMLElement {
+	/**
+	 * Inject default styles for sort indicators
+	 * Since this component uses light DOM (not shadow DOM) to work with existing
+	 * table markup, we inject a shared stylesheet into the document head.
+	 * @private
+	 */
+	static _injectStyles() {
+		// Check if styles already exist
+		if (document.getElementById('table-sortable-styles')) {
+			return;
+		}
+
+		const style = document.createElement('style');
+		style.id = 'table-sortable-styles';
+		style.textContent = `
+			table-sortable thead th[aria-sort="ascending"] button::after {
+				content: var(--sort-indicator-asc, '↑') / '';
+			}
+			table-sortable thead th[aria-sort="descending"] button::after {
+				content: var(--sort-indicator-desc, '↓') / '';
+			}
+		`;
+		document.head.appendChild(style);
+	}
+
+	/**
+	 * Find the sort key for a cell
+	 * @private
+	 */
+	static _findSortKey(cell) {
+		if (cell.hasAttribute('data-sort-value')) {
+			return cell.getAttribute('data-sort-value');
+		}
+
+		const sortKeyElement = cell.querySelector('[data-sort-as]');
+		if (sortKeyElement) {
+			// Use the sort key element's text, then append the rest of the cell text
+			// This matches the original jQuery implementation
+			const sortKeyText = sortKeyElement.textContent.trim().toUpperCase();
+			const remainingText = cell.textContent
+				.replace(sortKeyElement.textContent, '')
+				.trim()
+				.toUpperCase();
+			return sortKeyText + ' ' + remainingText;
+		}
+
+		return cell.textContent.trim().toUpperCase();
+	}
+
 	constructor() {
 		super();
 		this._handleSort = this._handleSort.bind(this);
@@ -29,6 +77,7 @@ export class TableSortableElement extends HTMLElement {
 	connectedCallback() {
 		// Use setTimeout to ensure slotted content is available
 		setTimeout(() => {
+			TableSortableElement._injectStyles();
 			this._setupTable();
 			this._ensureColgroup();
 			this._setupAccessibility();
@@ -262,30 +311,6 @@ export class TableSortableElement extends HTMLElement {
 	}
 
 	/**
-	 * Find the sort key for a cell
-	 * @private
-	 */
-	_findSortKey(cell) {
-		if (cell.hasAttribute('data-sort-value')) {
-			return cell.getAttribute('data-sort-value');
-		}
-
-		const sortKeyElement = cell.querySelector('[data-sort-as]');
-		if (sortKeyElement) {
-			// Use the sort key element's text, then append the rest of the cell text
-			// This matches the original jQuery implementation
-			const sortKeyText = sortKeyElement.textContent.trim().toUpperCase();
-			const remainingText = cell.textContent
-				.replace(sortKeyElement.textContent, '')
-				.trim()
-				.toUpperCase();
-			return sortKeyText + ' ' + remainingText;
-		}
-
-		return cell.textContent.trim().toUpperCase();
-	}
-
-	/**
 	 * Sort the table by the specified column
 	 * @private
 	 */
@@ -340,7 +365,7 @@ export class TableSortableElement extends HTMLElement {
 				return;
 			}
 
-			const sortKey = this._findSortKey(cell);
+			const sortKey = TableSortableElement._findSortKey(cell);
 			const numericValue = parseInt(sortKey, 10);
 
 			// Use numeric comparison if the value is a valid number
