@@ -8,11 +8,90 @@
 			"declarations": [
 				{
 					"kind": "class",
-					"description": "A web component to enable users to sort the data in a table based on table cell values.",
+					"description": "A web component to enable users to sort table data by clicking on column headers. Built with accessibility in mind, featuring keyboard navigation, screen reader announcements, and light DOM manipulation.\n\nBased on the original jquery.easy-sortable-tables.js by Aaron Gustafson.",
 					"name": "TableSortableElement",
+					"slots": [
+						{
+							"description": "The table element to make sortable. Should contain a table with thead (containing th elements) and tbody elements. The component will automatically inject buttons into th elements if none are present (progressive enhancement).",
+							"name": ""
+						}
+					],
 					"members": [],
-					"events": [],
-					"attributes": [],
+					"events": [
+						{
+							"name": "table-sortable:sort",
+							"type": {
+								"text": "CustomEvent"
+							},
+							"description": "Fired when a column is sorted",
+							"detail": {
+								"type": {
+									"text": "{ column: number, direction: 'asc'|'desc', header: HTMLElement }"
+								}
+							}
+						}
+					],
+					"attributes": [
+						{
+							"name": "label-sortable",
+							"type": {
+								"text": "string"
+							},
+							"description": "Custom label for sortable columns (default: 'Click to sort'). Used in screen reader announcements.",
+							"default": "\"Click to sort\""
+						},
+						{
+							"name": "label-ascending",
+							"type": {
+								"text": "string"
+							},
+							"description": "Custom label for ascending sort state (default: 'sorted ascending. Click to sort descending'). Used in screen reader announcements.",
+							"default": "\"sorted ascending. Click to sort descending\""
+						},
+						{
+							"name": "label-descending",
+							"type": {
+								"text": "string"
+							},
+							"description": "Custom label for descending sort state (default: 'sorted descending. Click to sort ascending'). Used in screen reader announcements.",
+							"default": "\"sorted descending. Click to sort ascending\""
+						},
+						{
+							"name": "data-sort-value",
+							"type": {
+								"text": "string | number"
+							},
+							"description": "Custom sort value for a table cell (td). When present, this value is used for sorting instead of the cell's text content. Useful for sorting by hidden values (e.g., timestamps, product codes) or numeric values with formatting.",
+							"fieldName": "data-sort-value"
+						},
+						{
+							"name": "data-sort-as",
+							"type": {
+								"text": "boolean"
+							},
+							"description": "Marks an element within a table cell as containing the sort value. The text content of this element will be used for sorting. Typically used on a hidden span element to sort by last name while displaying 'First Last'.",
+							"fieldName": "data-sort-as"
+						},
+						{
+							"name": "data-table-sort-group",
+							"type": {
+								"text": "string"
+							},
+							"description": "Groups table rows together during sorting. Rows with the same data-table-sort-group value will be kept together in their own tbody element. Use on tr elements within tbody groups to maintain logical groupings (e.g., departments, categories) while sorting within each group.",
+							"fieldName": "data-table-sort-group"
+						}
+					],
+					"cssProperties": [
+						{
+							"name": "--table-sortable-indicator-asc",
+							"description": "Ascending sort indicator character or symbol (default: ↑)"
+						},
+						{
+							"name": "--table-sortable-indicator-desc",
+							"description": "Descending sort indicator character or symbol (default: ↓)"
+						}
+					],
+					"cssParts": [],
 					"superclass": {
 						"name": "HTMLElement"
 					},
