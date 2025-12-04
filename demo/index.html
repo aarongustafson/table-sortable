@@ -3,17 +3,101 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>&lt;table-sortable&gt; Web Component Demo</title>
+		<title>Sortable Table Web Component Demo</title>
 		<link rel="stylesheet" href="./styles.css" />
 		<style>
 			/* Demo-specific styles */
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				margin: 1rem 0;
+			}
+
+			th,
+			td {
+				padding: 0.75rem;
+				text-align: left;
+				border: 1px solid #ddd;
+			}
+
+			th {
+				background-color: #f4f4f4;
+				font-weight: bold;
+			}
+
+			thead th button {
+				color: #0066cc;
+				text-decoration: none;
+				cursor: pointer;
+				display: block;
+				width: 100%;
+				text-align: left;
+				background: none;
+				border: none;
+				font: inherit;
+				padding: 0;
+			}
+
+			thead th button:hover,
+			thead th button:focus-visible {
+				outline: 2px solid #0066cc;
+				outline-offset: 2px;
+			}
+
+			thead th button {
+				display: inline-flex;
+				justify-content: space-between;
+				align-items: center;
+				gap: 0.5rem;
+			}
+
+			/* Sort indicators using CSS custom properties */
+			thead th button::after {
+				content: '\00a0';
+				display: block;
+				inline-size: 2rem;
+				text-align: end;
+			}
+
+			thead th[aria-sort='ascending'] button::after {
+				content: var(--table-sortable-indicator-asc, '↑') / '';
+			}
+
+			thead th[aria-sort='descending'] button::after {
+				content: var(--table-sortable-indicator-desc, '↓') / '';
+			}
+
+			/* Highlight sorted column */
+			col.sorted {
+				background-color: rebeccapurple;
+			}
+
+			tbody tr:nth-child(even) {
+				background-color: #cccccc33;
+				color: ButtonText;
+			}
+
+			.note {
+				background: CanvasText;
+				color: Canvas;
+				border-left: 4px solid #ffa500;
+				padding: 1rem;
+				margin: 1rem 0;
+			}
+
+			.grouped-indicator {
+				font-size: 0.85rem;
+				font-style: italic;
+			}
 		</style>
 	</head>
 	<body>
 		<header>
-			<h1>&lt;table-sortable&gt;</h1>
+			<h1>Sortable Table Web Component Demo</h1>
 			<p>
-				A web component to enable users to sort the data in a table based on table cell values. See the
+				A web component to enable users to sort table data by clicking
+				on column headers. Built with accessibility in mind, supporting
+				keyboard navigation and screen reader announcements. See the
 				<a
 					href="https://github.com/aarongustafson/table-sortable/blob/main/README.md"
 					>README</a
@@ -23,43 +107,506 @@
 		</header>
 
 		<main>
-			<!-- Basic Example -->
+			<!-- Progressive Enhancement Example -->
 			<section>
-				<h2>Basic Example</h2>
-				<p>A simple demonstration of the component.</p>
+				<h2>Progressive Enhancement</h2>
+				<p>
+					The component automatically enhances plain table headers by
+					injecting buttons. You don't need to add buttons or links to
+					your markup!
+				</p>
 
-				<div class="demo-section">
-					<h3>Basic Usage</h3>
-					<p>Description of this example.</p>
-					<div class="code-demo-pair">
-						<pre><code>&lt;table-sortable&gt;
-  &lt;p&gt;Content goes here&lt;/p&gt;
+			<div class="demo-section">
+				<h3>Auto-Enhanced Table</h3>
+				<div class="code-demo-pair">
+					<pre><code>&lt;table-sortable&gt;
+  &lt;table&gt;
+    &lt;thead&gt;
+      &lt;tr&gt;
+        &lt;th&gt;Name&lt;/th&gt;
+        &lt;th&gt;Age&lt;/th&gt;
+        &lt;th&gt;City&lt;/th&gt;
+      &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+      &lt;tr&gt;
+        &lt;td&gt;Charlie Brown&lt;/td&gt;
+        &lt;td&gt;35&lt;/td&gt;
+        &lt;td&gt;New York&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;!-- more rows --&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
 &lt;/table-sortable&gt;</code></pre>
-						<div class="demo">
-							<table-sortable>
-								<p>Content goes here</p>
-							</table-sortable>
-						</div>
+					<div class="demo">
+						<table-sortable>
+							<table>
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Age</th>
+										<th>City</th>
+										<th>Occupation</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>Charlie Brown</td>
+										<td>35</td>
+										<td>New York</td>
+										<td>Designer</td>
+									</tr>
+									<tr>
+										<td>Alice Cooper</td>
+										<td>28</td>
+										<td>Boston</td>
+										<td>Developer</td>
+									</tr>
+									<tr>
+										<td>Bob Dylan</td>
+										<td>42</td>
+										<td>Chicago</td>
+										<td>Manager</td>
+									</tr>
+									<tr>
+										<td>Diana Prince</td>
+										<td>31</td>
+										<td>Seattle</td>
+										<td>Engineer</td>
+									</tr>
+									<tr>
+										<td>Eve Anderson</td>
+										<td>26</td>
+										<td>Portland</td>
+										<td>Designer</td>
+									</tr>
+								</tbody>
+							</table>
+						</table-sortable>
+					</div>
+				</div>
+				<div class="note">
+					<strong>Progressive Enhancement:</strong> The component
+					automatically creates sortable buttons inside each
+					&lt;th&gt; element. No need to add buttons or links
+					manually!
+				</div>
+			</div>
+			</section>
+
+			<!-- Custom Sort Keys -->
+			<section>
+				<h2>Custom Sort Keys</h2>
+				<p>
+					Use the <code>data-sort-value</code> attribute to define
+					custom sort values that differ from the displayed content.
+				</p>
+
+			<div class="demo-section">
+				<h3>Product Pricing with Custom Keys</h3>
+				<pre><code>&lt;tr&gt;
+  &lt;td <mark>data-sort-value="WIDGET-B"</mark>&gt;Widget B (Premium)&lt;/td&gt;
+  &lt;td&gt;WDG-002&lt;/td&gt;
+  &lt;td <mark>data-sort-value="50"</mark>&gt;$50.00&lt;/td&gt;
+  &lt;td <mark>data-sort-value="15"</mark>&gt;Low (15)&lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+				<div class="demo">
+					<table-sortable>
+						<table>
+							<thead>
+								<tr>
+									<th>Product</th>
+										<th>SKU</th>
+										<th>Price</th>
+										<th>Stock</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td data-sort-value="WIDGET-B">
+											Widget B (Premium)
+										</td>
+										<td>WDG-002</td>
+										<td data-sort-value="50">$50.00</td>
+										<td data-sort-value="15">Low (15)</td>
+									</tr>
+									<tr>
+										<td data-sort-value="WIDGET-A">
+											Widget A (Basic)
+										</td>
+										<td>WDG-001</td>
+										<td data-sort-value="30">$30.00</td>
+										<td data-sort-value="100">High (100)</td>
+									</tr>
+									<tr>
+										<td data-sort-value="WIDGET-C">
+											Widget C (Deluxe)
+										</td>
+										<td>WDG-003</td>
+										<td data-sort-value="100">$100.00</td>
+										<td data-sort-value="5">Very Low (5)</td>
+									</tr>
+									<tr>
+										<td data-sort-value="GADGET-A">
+											Gadget A (Standard)
+										</td>
+										<td>GDG-001</td>
+										<td data-sort-value="75">$75.00</td>
+										<td data-sort-value="50">Medium (50)</td>
+									</tr>
+								</tbody>
+							</table>
+						</table-sortable>
+					</div>
+					<div class="note">
+						<strong>Note:</strong> The "Price" and "Stock" columns
+						use <code>data-sort-value</code>
+						to sort numerically rather than alphabetically by the
+						formatted text.
 					</div>
 				</div>
 			</section>
 
-			<!-- Example with Attributes -->
+			<!-- Hidden Sort Keys -->
 			<section>
-				<h2>Example with Attributes</h2>
-				<p>Demonstrating component attributes.</p>
+				<h2>Hidden Sort Keys</h2>
+				<p>
+					Use a <code>[data-sort-as]</code> element to provide sort values
+					that aren't displayed to users.
+				</p>
 
-				<div class="demo-section">
-					<h3>Using Attributes</h3>
-					<p>Description of this example with attributes.</p>
-					<div class="code-demo-pair">
-						<pre><code>&lt;table-sortable example-attribute="value"&gt;
-  &lt;p&gt;Content with attributes&lt;/p&gt;
+			<div class="demo-section">
+				<h3>Sorting by Last Name</h3>
+				<pre><code>&lt;td&gt;
+  John <mark>&lt;span data-sort-as&gt;Smith&lt;/span&gt;</mark>
+&lt;/td&gt;</code></pre>
+				<div class="demo">
+					<table-sortable>
+						<table>
+							<thead>
+								<tr>
+									<th>Full Name</th>
+										<th>Email</th>
+										<th>Department</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>
+											John
+											<span data-sort-as>Smith</span>
+										</td>
+										<td>john.smith@example.com</td>
+										<td>Engineering</td>
+									</tr>
+									<tr>
+										<td>
+											Emily
+											<span data-sort-as
+												>Anderson</span
+											>
+										</td>
+										<td>emily.anderson@example.com</td>
+										<td>Marketing</td>
+									</tr>
+									<tr>
+										<td>
+											Wei
+											<span data-sort-as>Zhang</span>
+										</td>
+										<td>wei.zhang@example.com</td>
+										<td>Design</td>
+									</tr>
+									<tr>
+										<td>
+											Sarah
+											<span data-sort-as>Brown</span>
+										</td>
+										<td>sarah.brown@example.com</td>
+										<td>Sales</td>
+									</tr>
+								</tbody>
+							</table>
+						</table-sortable>
+					</div>
+					<div class="note">
+						<strong>Note:</strong> The name column sorts by last
+						name (hidden in <code>[data-sort-as]</code>) while displaying
+						"First Last" format.
+					</div>
+				</div>
+			</section>
+
+			<!-- Grouped Tables -->
+			<section>
+				<h2>Grouped Tables</h2>
+				<p>
+					Use multiple <code>&lt;tbody&gt;</code> elements with
+					<code>data-table-sort-group</code> attributes to maintain
+					groupings while sorting.
+				</p>
+
+			<div class="demo-section">
+				<h3>Department-Grouped Employee List</h3>
+				<pre><code>&lt;tbody&gt;
+  &lt;tr <mark>data-table-sort-group="engineering"</mark>&gt;
+    &lt;td&gt;Charlie Brown&lt;/td&gt;
+    &lt;td&gt;85&lt;/td&gt;
+    &lt;td&gt;Active&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;</code></pre>
+				<div class="demo">
+					<table-sortable>
+						<table>
+							<thead>
+								<tr>
+									<th>Name</th>
+										<th>Score</th>
+										<th>Status</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr data-table-sort-group="engineering">
+										<td>
+											Charlie Brown
+											<span class="grouped-indicator"
+												>(Engineering)</span
+											>
+										</td>
+										<td>85</td>
+										<td>Active</td>
+									</tr>
+									<tr data-table-sort-group="engineering">
+										<td>
+											Frank Miller
+											<span class="grouped-indicator"
+												>(Engineering)</span
+											>
+										</td>
+										<td>88</td>
+										<td>On Leave</td>
+									</tr>
+									<tr data-table-sort-group="engineering">
+										<td>
+											Eve Adams
+											<span class="grouped-indicator"
+												>(Engineering)</span
+											>
+										</td>
+										<td>76</td>
+										<td>Inactive</td>
+									</tr>
+								</tbody>
+								<tbody>
+									<tr data-table-sort-group="design">
+										<td>
+											Alice Cooper
+											<span class="grouped-indicator"
+												>(Design)</span
+											>
+										</td>
+										<td>92</td>
+										<td>Active</td>
+									</tr>
+									<tr data-table-sort-group="design">
+										<td>
+											Grace Hopper
+											<span class="grouped-indicator"
+												>(Design)</span
+											>
+										</td>
+										<td>98</td>
+										<td>Active</td>
+									</tr>
+								</tbody>
+								<tbody>
+									<tr data-table-sort-group="sales">
+										<td>
+											Bob Dylan
+											<span class="grouped-indicator"
+												>(Sales)</span
+											>
+										</td>
+										<td>78</td>
+										<td>Active</td>
+									</tr>
+									<tr data-table-sort-group="sales">
+										<td>
+											Henry Ford
+											<span class="grouped-indicator"
+												>(Sales)</span
+											>
+										</td>
+										<td>84</td>
+										<td>Active</td>
+									</tr>
+								</tbody>
+								<tbody>
+									<tr data-table-sort-group="marketing">
+										<td>
+											Diana Prince
+											<span class="grouped-indicator"
+												>(Marketing)</span
+											>
+										</td>
+										<td>95</td>
+										<td>Active</td>
+									</tr>
+								</tbody>
+							</table>
+						</table-sortable>
+					</div>
+					<div class="note">
+						<strong>Note:</strong> Multiple rows can exist within each
+						<code>&lt;tbody&gt;</code> group. Each group has a
+						<code>data-table-sort-group</code> attribute. Rows within
+						the same tbody are kept together when sorting.
+					</div>
+				</div>
+			</section>
+
+			<!-- Custom Labels -->
+			<section>
+				<h2>Custom Labels (Localization)</h2>
+				<p>
+					Customize screen reader announcements using the
+					<code>label-sortable</code>, <code>label-ascending</code>, and
+					<code>label-descending</code> attributes. Perfect for localization.
+				</p>
+
+			<div class="demo-section">
+				<h3>French Localization</h3>
+				<pre><code>&lt;table-sortable
+  <mark>label-sortable="Cliquer pour trier"</mark>
+  <mark>label-ascending="trié croissant. Cliquer pour trier décroissant"</mark>
+  <mark>label-descending="trié décroissant. Cliquer pour trier croissant"</mark>&gt;
+  &lt;table&gt;
+    &lt;thead&gt;
+      &lt;tr&gt;
+        &lt;th&gt;Nom&lt;/th&gt;
+        &lt;th&gt;Âge&lt;/th&gt;
+      &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;!-- ... --&gt;
+  &lt;/table&gt;
 &lt;/table-sortable&gt;</code></pre>
-						<div class="demo">
-							<table-sortable example-attribute="value">
-								<p>Content with attributes</p>
-							</table-sortable>
+				<div class="demo">
+					<table-sortable
+						label-sortable="Cliquer pour trier"
+						label-ascending="trié croissant. Cliquer pour trier décroissant"
+						label-descending="trié décroissant. Cliquer pour trier croissant"
+					>
+						<table>
+							<thead>
+								<tr>
+									<th>Nom</th>
+									<th>Âge</th>
+									<th>Ville</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>Marie</td>
+									<td>28</td>
+									<td>Paris</td>
+								</tr>
+								<tr>
+									<td>Pierre</td>
+									<td>35</td>
+									<td>Lyon</td>
+								</tr>
+								<tr>
+									<td>Sophie</td>
+									<td>42</td>
+									<td>Marseille</td>
+								</tr>
+							</tbody>
+						</table>
+					</table-sortable>
+					<div style="margin-top: 1rem; padding: 1rem; background: #f0f0f0; border-radius: 4px;">
+						<strong>Note:</strong> The custom labels are announced to screen readers.
+						Click a column header and check your screen reader to hear the French announcements.
+					</div>
+				</div>
+			</div>
+			</section>
+
+			<!-- Progressive Enhancement Note -->
+			<section>
+				<h2>Progressive Enhancement</h2>
+				<p>
+					The component uses <strong>pure progressive enhancement</strong>.
+					Simply write plain <code>&lt;th&gt;</code> elements in your table headers,
+					and the component automatically injects accessible <code>&lt;button&gt;</code>
+					elements to make them sortable. You don't need to add any buttons or links manually.
+				</p>
+				<p>
+					All examples on this page demonstrate this approach - just plain
+					<code>&lt;th&gt;</code> elements that get enhanced with sorting functionality.
+				</p>
+			</section>
+			</section>
+
+			<!-- Event Handling -->
+			<section>
+				<h2>Event Handling</h2>
+				<p>
+					Listen to the <code>table-sortable:sort</code> event to
+					react to sorting changes.
+				</p>
+
+			<div class="demo-section">
+				<h3>Sort Event Listener</h3>
+				<pre><code>element.addEventListener('table-sortable:sort', (event) => {
+  const { column, direction, header } = event.detail;
+  console.log(`Sorted by ${header.textContent}`);
+});</code></pre>
+				<div class="demo">
+					<table-sortable id="event-demo">
+						<table>
+							<thead>
+								<tr>
+									<th>Name</th>
+										<th>Value</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>Item C</td>
+										<td>30</td>
+									</tr>
+									<tr>
+										<td>Item A</td>
+										<td>10</td>
+									</tr>
+									<tr>
+										<td>Item B</td>
+										<td>20</td>
+									</tr>
+								</tbody>
+							</table>
+						</table-sortable>
+						<div
+							id="event-log"
+							style="
+								margin-top: 1rem;
+								padding: 1rem;
+								background: #f0f0f0;
+								color: #000;
+								border-radius: 4px;
+							"
+						>
+							<strong>Event Log:</strong>
+							<div
+								id="event-messages"
+								style="
+									margin-top: 0.5rem;
+									font-family: monospace;
+									font-size: 0.9rem;
+								"
+							>
+								<em>Click a column header to see events...</em>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -71,10 +618,7 @@
 				<p>
 					For complete documentation of attributes, events, and
 					browser support, see the
-					<a
-						href="https://github.com/aarongustafson/table-sortable/blob/main/README.md"
-						>README</a
-					>.
+					<a href="../">README</a>.
 				</p>
 			</section>
 		</main>
@@ -91,5 +635,32 @@
 		</footer>
 
 		<script src="../define.js" type="module"></script>
+		<script>
+			// Event handling demo
+			const eventDemo = document.getElementById('event-demo');
+			const eventMessages = document.getElementById('event-messages');
+			let eventCount = 0;
+
+			eventDemo.addEventListener('table-sortable:sort', (event) => {
+				eventCount++;
+				const { column, direction, header } = event.detail;
+				const columnName = header.textContent.trim();
+
+				const message = document.createElement('div');
+				message.textContent = `[${eventCount}] Sorted by "${columnName}" (column ${column}) in ${direction}ending order`;
+				message.style.marginTop = '0.25rem';
+
+				if (eventMessages.querySelector('em')) {
+					eventMessages.innerHTML = '';
+				}
+
+				eventMessages.insertBefore(message, eventMessages.firstChild);
+
+				// Keep only last 5 messages
+				while (eventMessages.children.length > 5) {
+					eventMessages.removeChild(eventMessages.lastChild);
+				}
+			});
+		</script>
 	</body>
 </html>
