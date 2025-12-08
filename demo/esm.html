@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>table-sortable via esm.sh</title>
+		<style>
+			body {
+				font-family: system-ui, sans-serif;
+				margin: 2rem;
+				line-height: 1.5;
+			}
+
+			table {
+				border-collapse: collapse;
+				width: 100%;
+				max-width: 680px;
+			}
+
+			td,
+			th {
+				border: 1px solid #ddd;
+				padding: 0.5rem 0.75rem;
+				text-align: left;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>esm.sh CDN sanity check</h1>
+		<p>
+			This page loads the component class from <code>esm.sh</code> and
+			registers it manually.
+		</p>
+
+		<table-sortable>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Age</th>
+						<th>City</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Charlie</td>
+						<td>35</td>
+						<td>New York</td>
+					</tr>
+					<tr>
+						<td>Alice</td>
+						<td>28</td>
+						<td>Boston</td>
+					</tr>
+					<tr>
+						<td>Bob</td>
+						<td>42</td>
+						<td>Chicago</td>
+					</tr>
+				</tbody>
+			</table>
+		</table-sortable>
+
+		<script type="module">
+			import { TableSortableElement } from 'https://esm.sh/@aarongustafson/table-sortable@1.0.0/table-sortable.js?bundle&target=es2022';
+
+			if (!customElements.get('table-sortable')) {
+				customElements.define('table-sortable', TableSortableElement);
+			}
+		</script>
+	</body>
+</html>
