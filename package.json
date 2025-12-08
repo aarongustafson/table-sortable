@@ -1,6 +1,6 @@
 {
 	"name": "@aarongustafson/table-sortable",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"description": "A web component to enable users to sort the data in a table based on table cell values.",
 	"keywords": [
 		"html",
