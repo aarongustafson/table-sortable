@@ -28,28 +28,36 @@ npm install @aarongustafson/table-sortable
 
 ## Usage
 
-### Option 1: Auto-define the custom element (easiest)
-
-Import the package to automatically define the `<table-sortable>` custom element:
-
-```javascript
-import '@aarongustafson/table-sortable';
-```
-
-Or use the define-only script in HTML:
-
-```html
-<script src="./node_modules/@aarongustafson/table-sortable/define.js" type="module"></script>
-```
-
-### Option 2: Import the class and define manually
+### Option 1: Import the class and define manually
 
 Import the class and define the custom element with your preferred tag name:
 
 ```javascript
-import { TableSortableElement } from '@aarongustafson/table-sortable/table-sortable.js';
+import { TableSortableElement } from '@aarongustafson/table-sortable';
 
 customElements.define('my-custom-name', TableSortableElement);
+```
+
+### Option 2: Auto-define the custom element (browser environments only)
+
+Use the guarded definition helper to register the element when `customElements` is available:
+
+```javascript
+import '@aarongustafson/table-sortable/define.js';
+```
+
+If you prefer to control when the element is registered, call the helper directly:
+
+```javascript
+import { defineTableSortable } from '@aarongustafson/table-sortable/define.js';
+
+defineTableSortable();
+```
+
+You can also include the guarded script from HTML:
+
+```html
+<script src="./node_modules/@aarongustafson/table-sortable/define.js" type="module"></script>
 ```
 
 ### Basic Example
