@@ -4,24 +4,29 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>table-sortable via esm.sh</title>
+		<link rel="stylesheet" href="./styles.css" />
 		<style>
-			body {
-				font-family: system-ui, sans-serif;
-				margin: 2rem;
-				line-height: 1.5;
-			}
-
 			table {
 				border-collapse: collapse;
 				width: 100%;
 				max-width: 680px;
+				margin: 1rem 0;
 			}
 
-			td,
-			th {
+			th,
+			td {
 				border: 1px solid #ddd;
-				padding: 0.5rem 0.75rem;
+				padding: 0.75rem;
 				text-align: left;
+			}
+
+			th {
+				background-color: #f4f4f4;
+				color: #000;
+			}
+
+			table-sortable th button::after {
+				margin-inline-start: 0.5em;
 			}
 		</style>
 	</head>
