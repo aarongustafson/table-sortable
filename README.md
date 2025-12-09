@@ -18,7 +18,9 @@ Based on the original [jquery.easy-sortable-tables.js](https://github.com/easy-d
 
 ## Demo
 
-[Live Demo](https://aarongustafson.github.io/table-sortable/demo/) ([Source](./demo/index.html))
+- [Full Demo](https://aarongustafson.github.io/table-sortable/demo/) ([Source](./demo/index.html))
+- [unpkg CDN Demo](https://aarongustafson.github.io/table-sortable/demo/unpkg.html) ([Source](./demo/unpkg.html))
+- [esm.sh CDN Demo](https://aarongustafson.github.io/table-sortable/demo/esm.html) ([Source](./demo/esm.html))
 
 ## Installation
 
