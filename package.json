@@ -21,12 +21,14 @@
 	"main": "index.js",
 	"module": "table-sortable.js",
 	"customElements": "custom-elements.json",
+	"types": "table-sortable.d.ts",
 	"exports": {
 		".": {
 			"import": "./index.js"
 		},
 		"./table-sortable.js": {
-			"import": "./table-sortable.js"
+			"import": "./table-sortable.js",
+			"types": "./table-sortable.d.ts"
 		},
 		"./define.js": {
 			"import": "./define.js"
@@ -34,6 +36,7 @@
 		"./custom-elements.json": "./custom-elements.json"
 	},
 	"files": [
+		"table-sortable.d.ts",
 		"table-sortable.js",
 		"define.js",
 		"index.js",
@@ -42,7 +45,7 @@
 		"LICENSE"
 	],
 	"engines": {
-		"node": ">=14.0.0"
+		"node": ">=20.0.0"
 	},
 	"scripts": {
 		"setup": "node scripts/setup.js",
