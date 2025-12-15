@@ -176,8 +176,37 @@ export class TableSortableElement extends HTMLElement {
 			descending: 'sorted descending. Click to sort ascending',
 		};
 
-		const attrName = `label-${type}`;
-		return this.getAttribute(attrName) || defaults[type];
+		const labelValues = {
+			sortable: this.labelSortable,
+			ascending: this.labelAscending,
+			descending: this.labelDescending,
+		};
+
+		return labelValues[type] || defaults[type];
+	}
+
+	get labelSortable() {
+		return this.getAttribute('label-sortable');
+	}
+
+	set labelSortable(value) {
+		this._reflectStringAttribute('label-sortable', value);
+	}
+
+	get labelAscending() {
+		return this.getAttribute('label-ascending');
+	}
+
+	set labelAscending(value) {
+		this._reflectStringAttribute('label-ascending', value);
+	}
+
+	get labelDescending() {
+		return this.getAttribute('label-descending');
+	}
+
+	set labelDescending(value) {
+		this._reflectStringAttribute('label-descending', value);
 	}
 
 	/**
@@ -432,5 +461,13 @@ export class TableSortableElement extends HTMLElement {
 			tbody.appendChild(row);
 		});
 		this._table.appendChild(tbody);
+	}
+
+	_reflectStringAttribute(attrName, value) {
+		if (value === null || value === undefined || value === '') {
+			this.removeAttribute(attrName);
+			return;
+		}
+		this.setAttribute(attrName, String(value));
 	}
 }
