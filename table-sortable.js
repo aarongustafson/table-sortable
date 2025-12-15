@@ -75,6 +75,9 @@ export class TableSortableElement extends HTMLElement {
 	}
 
 	connectedCallback() {
+		this._upgradeProperty('labelSortable');
+		this._upgradeProperty('labelAscending');
+		this._upgradeProperty('labelDescending');
 		// Use setTimeout to ensure slotted content is available
 		setTimeout(() => {
 			TableSortableElement._injectStyles();
@@ -469,5 +472,13 @@ export class TableSortableElement extends HTMLElement {
 			return;
 		}
 		this.setAttribute(attrName, String(value));
+	}
+
+	_upgradeProperty(prop) {
+		if (Object.prototype.hasOwnProperty.call(this, prop)) {
+			const value = this[prop];
+			delete this[prop];
+			this[prop] = value;
+		}
 	}
 }
