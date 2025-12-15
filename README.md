@@ -30,6 +30,10 @@ npm install @aarongustafson/table-sortable
 
 ## Usage
 
+> **TypeScript ready**
+>
+> The package ships with `table-sortable.d.ts`. Importing either the class (`{ TableSortableElement }`) or the guarded definition helper automatically provides typed event payloads (`table-sortable:sort`) and reflective properties (`labelSortable`, `labelAscending`, `labelDescending`).
+
 ### Option 1: Import the class and define manually
 
 Import the class and define the custom element with your preferred tag name:

@@ -16,6 +16,8 @@ export declare class TableSortableElement extends HTMLElement {
 
 export declare function defineTableSortable(tagName?: string): boolean;
 
+export { TableSortableElement as default };
+
 declare global {
 	interface HTMLElementTagNameMap {
 		'table-sortable': TableSortableElement;
