@@ -1,6 +1,17 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TableSortableElement } from '../table-sortable.js';
 
+const waitForComponent = () =>
+	new Promise((resolve) => {
+		if (typeof requestAnimationFrame === 'function') {
+			requestAnimationFrame(() => {
+				requestAnimationFrame(resolve);
+			});
+			return;
+		}
+		setTimeout(resolve, 0);
+	});
+
 describe('TableSortableElement', () => {
 	let element;
 
@@ -33,6 +44,41 @@ describe('TableSortableElement', () => {
 		expect(element.shadowRoot).toBeNull();
 	});
 
+	describe('Property reflection', () => {
+		it('reflects property assignments to attributes', () => {
+			element.labelSortable = 'Tap to sort';
+			expect(element.getAttribute('label-sortable')).toBe('Tap to sort');
+		});
+
+		it('exposes attribute values through properties', () => {
+			element.setAttribute('label-ascending', 'Ascending label');
+			expect(element.labelAscending).toBe('Ascending label');
+		});
+
+		it('preserves pre-connection property assignments', async () => {
+			const preConnected = document.createElement('table-sortable');
+			preConnected.labelDescending = 'Descending label';
+			preConnected.innerHTML = `
+				<table>
+					<thead>
+						<tr>
+							<th>Name</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr><td>Alice</td></tr>
+					</tbody>
+				</table>
+			`;
+			document.body.appendChild(preConnected);
+			await waitForComponent();
+			expect(preConnected.getAttribute('label-descending')).toBe(
+				'Descending label',
+			);
+			preConnected.remove();
+		});
+	});
+
 	describe('Progressive enhancement', () => {
 		beforeEach(async () => {
 			element.innerHTML = `
@@ -58,7 +104,7 @@ describe('TableSortableElement', () => {
 					</tbody>
 				</table>
 			`;
-			await new Promise((resolve) => setTimeout(resolve, 10));
+			await waitForComponent();
 		});
 
 		it('should inject buttons into plain th elements', () => {
@@ -127,8 +173,8 @@ describe('TableSortableElement', () => {
 					</tbody>
 				</table>
 			`;
-			// Wait for connectedCallback setTimeout
-			await new Promise((resolve) => setTimeout(resolve, 10));
+			// Wait for requestAnimationFrame-driven initialization
+			await waitForComponent();
 		});
 
 		it('should find and set up the table', () => {
@@ -177,7 +223,7 @@ describe('TableSortableElement', () => {
 					</tbody>
 				</table>
 			`;
-			await new Promise((resolve) => setTimeout(resolve, 10));
+			await waitForComponent();
 		});
 
 		it('should sort alphabetically in ascending order on first click', () => {
@@ -321,7 +367,7 @@ describe('TableSortableElement', () => {
 					</tbody>
 				</table>
 			`;
-			await new Promise((resolve) => setTimeout(resolve, 10));
+			await waitForComponent();
 		});
 
 		it('should sort when Enter key is pressed', () => {
@@ -382,7 +428,7 @@ describe('TableSortableElement', () => {
 					</tbody>
 				</table>
 			`;
-			await new Promise((resolve) => setTimeout(resolve, 10));
+			await waitForComponent();
 		});
 
 		it('should use data-sort-value attribute for sorting', () => {
@@ -432,7 +478,7 @@ describe('TableSortableElement', () => {
 					</tbody>
 				</table>
 			`;
-			await new Promise((resolve) => setTimeout(resolve, 10));
+			await waitForComponent();
 		});
 
 		it('should use [data-sort-as] element for sorting', () => {
@@ -485,7 +531,7 @@ describe('TableSortableElement', () => {
 					</tbody>
 				</table>
 			`;
-			await new Promise((resolve) => setTimeout(resolve, 10));
+			await waitForComponent();
 		});
 
 		it('should maintain grouped tbody elements when sorting', () => {
@@ -646,7 +692,7 @@ describe('TableSortableElement', () => {
 					</tbody>
 				</table>
 			`;
-			await new Promise((resolve) => setTimeout(resolve, 10));
+			await waitForComponent();
 		});
 
 		it('should work with button elements', () => {
@@ -681,7 +727,7 @@ describe('TableSortableElement', () => {
 					</tbody>
 				</table>
 			`;
-			await new Promise((resolve) => setTimeout(resolve, 10));
+			await waitForComponent();
 			vi.useFakeTimers();
 		});
 
@@ -732,7 +778,7 @@ describe('TableSortableElement', () => {
 					</tbody>
 				</table>
 			`;
-			await new Promise((resolve) => setTimeout(resolve, 10));
+			await waitForComponent();
 		});
 
 		it('should inject colgroup if not present', () => {
@@ -797,7 +843,7 @@ describe('TableSortableElement', () => {
 					</tbody>
 				</table>
 			`;
-			await new Promise((resolve) => setTimeout(resolve, 10));
+			await waitForComponent();
 
 			const colgroups = element.querySelectorAll('colgroup');
 			expect(colgroups.length).toBe(1);
@@ -823,7 +869,7 @@ describe('TableSortableElement', () => {
 					</tbody>
 				</table>
 			`;
-			await new Promise((resolve) => setTimeout(resolve, 10));
+			await waitForComponent();
 		});
 
 		it('should use custom labels in screen reader announcements', () => {
@@ -855,7 +901,7 @@ describe('TableSortableElement', () => {
 					</tbody>
 				</table>
 			`;
-			await new Promise((resolve) => setTimeout(resolve, 10));
+			await waitForComponent();
 
 			const handler = vi.fn();
 			element.addEventListener('table-sortable:sort', handler);
@@ -882,7 +928,7 @@ describe('TableSortableElement', () => {
 					</tbody>
 				</table>
 			`;
-			await new Promise((resolve) => setTimeout(resolve, 10));
+			await waitForComponent();
 
 			const liveRegion = element._liveRegion;
 			expect(liveRegion).toBeTruthy();
