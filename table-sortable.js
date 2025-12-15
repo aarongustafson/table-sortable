@@ -72,24 +72,21 @@ export class TableSortableElement extends HTMLElement {
 		this._handleSort = this._handleSort.bind(this);
 		this._handleKeyDown = this._handleKeyDown.bind(this);
 		this._announcementTimeout = null;
+		this._pendingInitFrame = null;
 	}
 
 	connectedCallback() {
 		this._upgradeProperty('labelSortable');
 		this._upgradeProperty('labelAscending');
 		this._upgradeProperty('labelDescending');
-		// Use setTimeout to ensure slotted content is available
-		setTimeout(() => {
-			TableSortableElement._injectStyles();
-			this._setupTable();
-			this._ensureColgroup();
-			this._setupAccessibility();
-			this._addEventListeners();
-			this._createLiveRegion();
-		}, 0);
+		this._scheduleInitialization();
 	}
 
 	disconnectedCallback() {
+		if (this._pendingInitFrame !== null) {
+			cancelAnimationFrame(this._pendingInitFrame);
+			this._pendingInitFrame = null;
+		}
 		this._removeEventListeners();
 		this._removeLiveRegion();
 		if (this._announcementTimeout) {
@@ -237,6 +234,15 @@ export class TableSortableElement extends HTMLElement {
 		if (this._liveRegion && this._liveRegion.parentNode) {
 			this._liveRegion.parentNode.removeChild(this._liveRegion);
 		}
+	}
+
+	_initialize() {
+		TableSortableElement._injectStyles();
+		this._setupTable();
+		this._ensureColgroup();
+		this._setupAccessibility();
+		this._addEventListeners();
+		this._createLiveRegion();
 	}
 
 	/**
@@ -464,6 +470,21 @@ export class TableSortableElement extends HTMLElement {
 			tbody.appendChild(row);
 		});
 		this._table.appendChild(tbody);
+	}
+
+	_scheduleInitialization() {
+		if (!this.isConnected) {
+			return;
+		}
+
+		if (this._pendingInitFrame !== null) {
+			cancelAnimationFrame(this._pendingInitFrame);
+		}
+
+		this._pendingInitFrame = requestAnimationFrame(() => {
+			this._pendingInitFrame = null;
+			this._initialize();
+		});
 	}
 
 	_reflectStringAttribute(attrName, value) {
