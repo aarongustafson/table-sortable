@@ -137,9 +137,9 @@ This is useful for:
 - Sorting dates by ISO format while displaying a friendly format
 - Custom sorting logic (e.g., priority: High > Medium > Low)
 
-### Hidden Sort Keys
+### Inline Sort Keys with `data-sort-as`
 
-Use an element with the class `[data-sort-as]` to provide a hidden sort value:
+Use a `[data-sort-as]` element to mark the visible text fragment that should lead sorting:
 
 ```html
 <table-sortable>
@@ -151,25 +151,19 @@ Use an element with the class `[data-sort-as]` to provide a hidden sort value:
     </thead>
     <tbody>
       <tr>
-        <td><span data-sort-as>SMITH</span>John Smith</td>
+        <td>John <span data-sort-as>Smith</span></td>
       </tr>
       <tr>
-        <td><span data-sort-as>ANDERSON</span>Emily Anderson</td>
+        <td>Emily <span data-sort-as>Anderson</span></td>
       </tr>
     </tbody>
   </table>
 </table-sortable>
 ```
 
-The `[data-sort-as]` element should be hidden with CSS:
+This allows sorting by last name while still displaying the full name naturally.
 
-```css
-[data-sort-as] {
-  display: none;
-}
-```
-
-This allows sorting by last name while displaying "First Last" format.
+If you need a sort token that should not be visible, you can still hide a `[data-sort-as]` element with CSS, but visible text is generally preferable to reduce duplicated content.
 
 ### Grouped Tables
 
