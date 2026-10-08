@@ -32,6 +32,7 @@
 			"types": "./table-sortable.d.ts"
 		},
 		"./define.js": {
+			"types": "./define.d.ts",
 			"import": "./define.js"
 		},
 		"./custom-elements.json": "./custom-elements.json"
@@ -40,6 +41,7 @@
 		"table-sortable.d.ts",
 		"table-sortable.js",
 		"define.js",
+		"define.d.ts",
 		"index.js",
 		"custom-elements.json",
 		"README.md",
