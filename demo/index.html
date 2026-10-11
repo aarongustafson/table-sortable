@@ -536,9 +536,13 @@
 							</tbody>
 						</table>
 					</table-sortable>
-					<div style="margin-top: 1rem; padding: 1rem; background: #f0f0f0; border-radius: 4px;">
-						<strong>Note:</strong> The custom labels are announced to screen readers.
-						Click a column header and check your screen reader to hear the French announcements.
+					<div class="note">
+						<strong>Note:</strong> The custom labels are announced to screen
+						readers. Click a column header and check your screen reader to hear
+						the French announcements. In Chromium browsers that support
+						<code>ariaNotify()</code>, run
+						<code>monitor(Element.prototype.ariaNotify)</code> in DevTools to
+						observe the notification calls.
 					</div>
 				</div>
 			</div>
