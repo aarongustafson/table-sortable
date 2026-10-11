@@ -462,16 +462,15 @@
 						</table-sortable>
 					</div>
 					<div class="note">
-						<strong>Why it goes on each row:</strong> Sorting removes the
-						original <code>&lt;tbody&gt;</code> elements, so the row-level
-						attribute preserves each row's group membership as it moves.
-						Rows with the same value are then placed together in a new
-						<code>&lt;tbody&gt;</code>. Use one normal
-						<code>&lt;tbody&gt;</code> around the data rows; you do not need
-						one per group. Multiple bodies are allowed initially, but they do
-						not define the groups unless they have a
-						<code>data-table-sort-group</code> attribute. A value directly on
-						a row overrides the value inherited from its body.
+						<strong>Choosing where to define a group:</strong> Apply
+						<code>data-table-sort-group</code> to each
+						<code>&lt;tr&gt;</code> when, as in this example, several groups
+						share one <code>&lt;tbody&gt;</code>. Alternatively, apply it to a
+						<code>&lt;tbody&gt;</code> to give all of that body's rows the
+						same group. A value directly on a row overrides the body's value.
+						When sorting, the component rebuilds the
+						<code>&lt;tbody&gt;</code> elements from these effective group
+						values; the original body structure alone does not define groups.
 					</div>
 				</div>
 			</section>
