@@ -9,7 +9,7 @@ Based on the original [jquery.easy-sortable-tables.js](https://github.com/easy-d
 ## Features
 
 - ✅ **Accessible**: Full keyboard navigation support with Enter/Space activation
-- ✅ **Screen Reader Friendly**: Announces sort changes via ARIA live regions
+- ✅ **Screen Reader Friendly**: Announces sort changes with `ariaNotify()` or a live-region fallback
 - ✅ **Light DOM**: No Shadow DOM - works with your existing table markup
 - ✅ **Flexible Sorting**: Supports text, numeric, and custom sort keys
 - ✅ **Grouped Tables**: Keeps related rows together when sorting
@@ -323,7 +323,9 @@ The component is built with accessibility as a priority:
 
 2. **Screen Reader Support**:
    - `aria-sort` attribute indicates column sort state (ascending, descending, none)
-   - Live region announces sort changes using customizable labels
+   - Uses the native `ariaNotify()` API when available
+   - Lazily creates an ARIA live-region fallback only when needed
+   - Announces sort changes using customizable labels
    - Updates are announced politely without interrupting
 
 3. **Progressive Enhancement**:

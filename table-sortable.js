@@ -214,6 +214,8 @@ export class TableSortableElement extends HTMLElement {
 	 * @private
 	 */
 	_createLiveRegion() {
+		if (this._liveRegion) return;
+
 		this._liveRegion = document.createElement('div');
 		this._liveRegion.setAttribute('role', 'status');
 		this._liveRegion.setAttribute('aria-live', 'polite');
@@ -234,6 +236,7 @@ export class TableSortableElement extends HTMLElement {
 		if (this._liveRegion && this._liveRegion.parentNode) {
 			this._liveRegion.parentNode.removeChild(this._liveRegion);
 		}
+		this._liveRegion = null;
 	}
 
 	_initialize() {
@@ -242,26 +245,22 @@ export class TableSortableElement extends HTMLElement {
 		this._ensureColgroup();
 		this._setupAccessibility();
 		this._addEventListeners();
-		this._createLiveRegion();
 	}
 
 	/**
-	 * Announce sorting change to screen readers
+	 * Send a polite screen reader notification
 	 * @private
 	 */
-	_announceSort(headerText, direction) {
-		if (!this._liveRegion) return;
+	_notify(message) {
+		if (typeof this.ariaNotify === 'function') {
+			this.ariaNotify(message, { priority: 'normal' });
+			return;
+		}
 
-		const directionLabel =
-			direction === 1
-				? this._getLabel('ascending')
-				: this._getLabel('descending');
-		const message = `${headerText}, ${directionLabel}`;
+		this._createLiveRegion();
 
-		// Clear previous announcement
 		this._liveRegion.textContent = '';
 
-		// Delay to ensure screen readers pick up the change
 		if (this._announcementTimeout) {
 			clearTimeout(this._announcementTimeout);
 		}
@@ -269,6 +268,18 @@ export class TableSortableElement extends HTMLElement {
 		this._announcementTimeout = setTimeout(() => {
 			this._liveRegion.textContent = message;
 		}, 100);
+	}
+
+	/**
+	 * Announce sorting change to screen readers
+	 * @private
+	 */
+	_announceSort(headerText, direction) {
+		const directionLabel =
+			direction === 1
+				? this._getLabel('ascending')
+				: this._getLabel('descending');
+		this._notify(`${headerText}, ${directionLabel}`);
 	}
 
 	/**
