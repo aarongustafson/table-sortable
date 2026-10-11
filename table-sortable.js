@@ -355,13 +355,19 @@ export class TableSortableElement extends HTMLElement {
 	_sortTable(column, direction, activeHeader) {
 		if (!this._table) return;
 
-		// Check if we have grouped rows
-		const hasGroups =
-			this._table.querySelectorAll('tr[data-table-sort-group]').length >
-			0;
-
 		// Get all rows from tbody elements
 		const rows = Array.from(this._table.querySelectorAll('tbody tr'));
+		const rowGroups = new Map();
+		let hasGroups = false;
+
+		rows.forEach((row) => {
+			const group =
+				row.getAttribute('data-table-sort-group') ??
+				row.closest('tbody')?.getAttribute('data-table-sort-group') ??
+				null;
+			rowGroups.set(row, group);
+			hasGroups ||= group !== null;
+		});
 
 		// Remove all tbody elements
 		const tbodies = this._table.querySelectorAll('tbody');
@@ -423,7 +429,7 @@ export class TableSortableElement extends HTMLElement {
 
 		// Re-append rows
 		if (hasGroups) {
-			this._appendGroupedRows(rows);
+			this._appendGroupedRows(rows, rowGroups);
 		} else {
 			this._appendSingleTbody(rows);
 		}
@@ -438,12 +444,11 @@ export class TableSortableElement extends HTMLElement {
 	 * Append rows as grouped tbody elements
 	 * @private
 	 */
-	_appendGroupedRows(rows) {
-		// Group rows by their data-table-sort-group attribute
+	_appendGroupedRows(rows, rowGroups) {
 		const groups = new Map();
 
 		rows.forEach((row) => {
-			const group = row.getAttribute('data-table-sort-group');
+			const group = rowGroups.get(row);
 			if (!groups.has(group)) {
 				groups.set(group, []);
 			}
@@ -451,8 +456,11 @@ export class TableSortableElement extends HTMLElement {
 		});
 
 		// Create tbody for each group and append rows
-		groups.forEach((groupRows) => {
+		groups.forEach((groupRows, group) => {
 			const tbody = document.createElement('tbody');
+			if (group !== null) {
+				tbody.setAttribute('data-table-sort-group', group);
+			}
 			groupRows.forEach((row) => {
 				tbody.appendChild(row);
 			});

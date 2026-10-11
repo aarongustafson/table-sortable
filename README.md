@@ -12,7 +12,7 @@ Based on the original [jquery.easy-sortable-tables.js](https://github.com/easy-d
 - ✅ **Screen Reader Friendly**: Announces sort changes via ARIA live regions
 - ✅ **Light DOM**: No Shadow DOM - works with your existing table markup
 - ✅ **Flexible Sorting**: Supports text, numeric, and custom sort keys
-- ✅ **Grouped Tables**: Maintains grouped `tbody` elements when sorting
+- ✅ **Grouped Tables**: Keeps related rows together when sorting
 - ✅ **No Dependencies**: Pure vanilla JavaScript web component
 - ✅ **Small Footprint**: Lightweight and performant
 
@@ -167,7 +167,8 @@ If you need a sort token that should not be visible, you can still hide a `[data
 
 ### Grouped Tables
 
-To maintain groupings while sorting, use multiple `<tbody>` elements with `data-table-sort-group` attributes:
+To keep related rows together while sorting, add the same
+`data-table-sort-group` value to every `<tr>` in a group:
 
 ```html
 <table-sortable>
@@ -183,14 +184,14 @@ To maintain groupings while sorting, use multiple `<tbody>` elements with `data-
         <td>Charlie (Engineering)</td>
         <td>85</td>
       </tr>
-    </tbody>
-    <tbody>
+      <tr data-table-sort-group="engineering">
+        <td>Frank (Engineering)</td>
+        <td>88</td>
+      </tr>
       <tr data-table-sort-group="design">
         <td>Alice (Design)</td>
         <td>92</td>
       </tr>
-    </tbody>
-    <tbody>
       <tr data-table-sort-group="sales">
         <td>Bob (Sales)</td>
         <td>78</td>
@@ -200,7 +201,35 @@ To maintain groupings while sorting, use multiple `<tbody>` elements with `data-
 </table-sortable>
 ```
 
-Each group (tbody) will be sorted independently and maintain its structure.
+The attribute belongs on each row, not on `<tbody>`, because sorting removes
+the original `<tbody>` elements and rebuilds them. The row-level value preserves
+each row's group membership while rows move. After sorting, rows with the same
+value are collected into a new `<tbody>`.
+
+Use a normal `<tbody>` around the table's data rows, as shown above. You do not
+need to provide a separate `<tbody>` for each group. Separate `<tbody>` elements
+are allowed in the initial markup, but they do not define the groups; the
+`data-table-sort-group` values on the rows do.
+
+As a shorthand, you can put `data-table-sort-group` on a `<tbody>` to give all
+of its rows the same group:
+
+```html
+<tbody data-table-sort-group="engineering">
+  <tr>
+    <td>Charlie (Engineering)</td>
+    <td>85</td>
+  </tr>
+  <tr>
+    <td>Frank (Engineering)</td>
+    <td>88</td>
+  </tr>
+</tbody>
+```
+
+A `data-table-sort-group` value directly on a `<tr>` overrides the value
+inherited from its `<tbody>`. The component writes the effective group value to
+each generated `<tbody>` so the grouping is preserved across subsequent sorts.
 
 ## Events
 

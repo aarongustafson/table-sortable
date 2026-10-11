@@ -674,6 +674,53 @@ describe('TableSortableElement', () => {
 					.textContent,
 			).toBe('Frank');
 		});
+
+		it('should inherit groups from tbody with row-level overrides', async () => {
+			element.innerHTML = `
+				<table>
+					<thead>
+						<tr><th>Name</th></tr>
+					</thead>
+					<tbody data-table-sort-group="engineering">
+						<tr><td>Charlie</td></tr>
+						<tr data-table-sort-group="design"><td>Alice</td></tr>
+						<tr><td>Frank</td></tr>
+					</tbody>
+					<tbody data-table-sort-group="sales">
+						<tr><td>Bob</td></tr>
+					</tbody>
+				</table>
+			`;
+			element._setupTable();
+			element._ensureColgroup();
+			element._setupAccessibility();
+			element._addEventListeners();
+
+			const nameHeader = element.querySelector('thead th button');
+			nameHeader.click();
+
+			let tbodies = element.querySelectorAll('tbody');
+			expect(tbodies.length).toBe(3);
+			expect(tbodies[0].getAttribute('data-table-sort-group')).toBe(
+				'design',
+			);
+			expect(tbodies[1].getAttribute('data-table-sort-group')).toBe(
+				'sales',
+			);
+			expect(tbodies[2].getAttribute('data-table-sort-group')).toBe(
+				'engineering',
+			);
+			expect(tbodies[2].querySelectorAll('tr').length).toBe(2);
+
+			nameHeader.click();
+
+			tbodies = element.querySelectorAll('tbody');
+			expect(tbodies.length).toBe(3);
+			expect(tbodies[0].getAttribute('data-table-sort-group')).toBe(
+				'engineering',
+			);
+			expect(tbodies[0].querySelectorAll('tr').length).toBe(2);
+		});
 	});
 
 	describe('Button elements as sort triggers', () => {

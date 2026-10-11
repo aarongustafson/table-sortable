@@ -77,7 +77,7 @@
 							"type": {
 								"text": "string"
 							},
-							"description": "Groups table rows together during sorting. Rows with the same data-table-sort-group value will be kept together in their own tbody element. Use on tr elements within tbody groups to maintain logical groupings (e.g., departments, categories) while sorting within each group.",
+							"description": "Groups table rows together during sorting. Apply the same value to each tr in a logical group (e.g., a department or category), or apply it to a tbody as a default for all contained rows. A value directly on tr overrides the inherited tbody value. Rows with the same effective value are collected into a new tbody.",
 							"fieldName": "data-table-sort-group"
 						}
 					],

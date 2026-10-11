@@ -341,9 +341,10 @@
 			<section>
 				<h2>Grouped Tables</h2>
 				<p>
-					Use multiple <code>&lt;tbody&gt;</code> elements with
-					<code>data-table-sort-group</code> attributes to maintain
-					groupings while sorting.
+					Add the same <code>data-table-sort-group</code> value to every
+					<code>&lt;tr&gt;</code> in a group to keep those rows together
+					while sorting. Alternatively, put the attribute on a
+					<code>&lt;tbody&gt;</code> to apply that value to all of its rows.
 				</p>
 
 			<div class="demo-section">
@@ -352,6 +353,16 @@
   &lt;tr <mark>data-table-sort-group="engineering"</mark>&gt;
     &lt;td&gt;Charlie Brown&lt;/td&gt;
     &lt;td&gt;85&lt;/td&gt;
+    &lt;td&gt;Active&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr <mark>data-table-sort-group="engineering"</mark>&gt;
+    &lt;td&gt;Frank Miller&lt;/td&gt;
+    &lt;td&gt;88&lt;/td&gt;
+    &lt;td&gt;On Leave&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr <mark>data-table-sort-group="design"</mark>&gt;
+    &lt;td&gt;Alice Cooper&lt;/td&gt;
+    &lt;td&gt;92&lt;/td&gt;
     &lt;td&gt;Active&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/tbody&gt;</code></pre>
@@ -396,8 +407,6 @@
 										<td>76</td>
 										<td>Inactive</td>
 									</tr>
-								</tbody>
-								<tbody>
 									<tr data-table-sort-group="design">
 										<td>
 											Alice Cooper
@@ -418,8 +427,6 @@
 										<td>98</td>
 										<td>Active</td>
 									</tr>
-								</tbody>
-								<tbody>
 									<tr data-table-sort-group="sales">
 										<td>
 											Bob Dylan
@@ -440,8 +447,6 @@
 										<td>84</td>
 										<td>Active</td>
 									</tr>
-								</tbody>
-								<tbody>
 									<tr data-table-sort-group="marketing">
 										<td>
 											Diana Prince
@@ -457,10 +462,16 @@
 						</table-sortable>
 					</div>
 					<div class="note">
-						<strong>Note:</strong> Multiple rows can exist within each
-						<code>&lt;tbody&gt;</code> group. Each group has a
-						<code>data-table-sort-group</code> attribute. Rows within
-						the same tbody are kept together when sorting.
+						<strong>Why it goes on each row:</strong> Sorting removes the
+						original <code>&lt;tbody&gt;</code> elements, so the row-level
+						attribute preserves each row's group membership as it moves.
+						Rows with the same value are then placed together in a new
+						<code>&lt;tbody&gt;</code>. Use one normal
+						<code>&lt;tbody&gt;</code> around the data rows; you do not need
+						one per group. Multiple bodies are allowed initially, but they do
+						not define the groups unless they have a
+						<code>data-table-sort-group</code> attribute. A value directly on
+						a row overrides the value inherited from its body.
 					</div>
 				</div>
 			</section>
