@@ -189,6 +189,37 @@ describe('TableSortableElement', () => {
 			});
 		});
 
+		it('should create shared descriptions for each sort state', () => {
+			const buttons = element.querySelectorAll('thead th button');
+			const descriptionIds = new Set();
+
+			buttons.forEach((button) => {
+				const descriptionId = button.getAttribute('aria-describedby');
+				const description = element.querySelector(`#${descriptionId}`);
+
+				expect(descriptionId).toBeTruthy();
+				expect(description.textContent).toBe('Click to sort ascending');
+				expect(description.classList).toContain(
+					'table-sortable-description',
+				);
+				descriptionIds.add(descriptionId);
+			});
+
+			expect(descriptionIds.size).toBe(1);
+			expect(
+				element.querySelectorAll('.table-sortable-description'),
+			).toHaveLength(3);
+			expect(
+				Array.from(
+					element.querySelectorAll('.table-sortable-description'),
+				).map((description) => description.textContent),
+			).toEqual([
+				'Click to sort ascending',
+				'sorted ascending. Click to sort descending',
+				'sorted descending. Click to sort ascending',
+			]);
+		});
+
 		it('should defer creating a fallback live region until it is needed', () => {
 			const liveRegion = element.querySelector('[role="status"]');
 			expect(liveRegion).toBeNull();
@@ -259,6 +290,58 @@ describe('TableSortableElement', () => {
 			expect(rows[0].children[1].textContent).toBe('28');
 			expect(rows[1].children[1].textContent).toBe('35');
 			expect(rows[2].children[1].textContent).toBe('42');
+		});
+
+		it('should reference the description for each column sort state', () => {
+			const nameButton = element.querySelector(
+				'thead th:first-child button',
+			);
+			const ageButton = element.querySelector(
+				'thead th:nth-child(2) button',
+			);
+			const nameDescription = nameButton.getAttribute('aria-describedby');
+			const ageDescription = ageButton.getAttribute('aria-describedby');
+			const descriptions = Array.from(
+				element.querySelectorAll('.table-sortable-description'),
+			);
+
+			expect(nameDescription).toBeTruthy();
+			expect(ageDescription).toBe(nameDescription);
+
+			nameButton.click();
+
+			const ascendingDescription =
+				nameButton.getAttribute('aria-describedby');
+			expect(ascendingDescription).not.toBe(nameDescription);
+			expect(
+				element.querySelector(`#${ascendingDescription}`).textContent,
+			).toBe('sorted ascending. Click to sort descending');
+			expect(ageButton.getAttribute('aria-describedby')).toBe(
+				ageDescription,
+			);
+
+			nameButton.click();
+
+			const descendingDescription =
+				nameButton.getAttribute('aria-describedby');
+			expect(descendingDescription).not.toBe(ascendingDescription);
+			expect(
+				element.querySelector(`#${descendingDescription}`).textContent,
+			).toBe('sorted descending. Click to sort ascending');
+
+			ageButton.click();
+
+			expect(nameButton.getAttribute('aria-describedby')).toBe(
+				nameDescription,
+			);
+			expect(ageButton.getAttribute('aria-describedby')).toBe(
+				ascendingDescription,
+			);
+			expect(
+				Array.from(
+					element.querySelectorAll('.table-sortable-description'),
+				),
+			).toEqual(descriptions);
 		});
 
 		it('should add "active" class to sorted column header', () => {
@@ -451,6 +534,24 @@ describe('TableSortableElement', () => {
 			expect(rows[0].children[1].textContent).toBe('$30.00');
 			expect(rows[1].children[1].textContent).toBe('$50.00');
 			expect(rows[2].children[1].textContent).toBe('$100.00');
+		});
+
+		it('should sort floating-point values numerically', () => {
+			element.querySelector('tbody').innerHTML = `
+				<tr><td>Widget A</td><td>30.5</td></tr>
+				<tr><td>Widget B</td><td>200.17</td></tr>
+				<tr><td>Widget C</td><td>5.9</td></tr>
+			`;
+
+			const priceHeader = element.querySelector(
+				'thead th:nth-child(2) button',
+			);
+			priceHeader.click();
+
+			const rows = element.querySelectorAll('tbody tr');
+			expect(rows[0].children[1].textContent).toBe('5.9');
+			expect(rows[1].children[1].textContent).toBe('30.5');
+			expect(rows[2].children[1].textContent).toBe('200.17');
 		});
 	});
 
@@ -945,6 +1046,27 @@ describe('TableSortableElement', () => {
 			expect(liveRegion.textContent).toContain('trié croissant');
 
 			vi.useRealTimers();
+		});
+
+		it('should use custom labels for each described sort state', () => {
+			const button = element.querySelector('thead th button');
+			let description = element.querySelector(
+				`#${button.getAttribute('aria-describedby')}`,
+			);
+
+			expect(description.textContent).toBe('Trier');
+
+			button.click();
+			description = element.querySelector(
+				`#${button.getAttribute('aria-describedby')}`,
+			);
+			expect(description.textContent).toBe('trié croissant');
+
+			button.click();
+			description = element.querySelector(
+				`#${button.getAttribute('aria-describedby')}`,
+			);
+			expect(description.textContent).toBe('trié décroissant');
 		});
 	});
 

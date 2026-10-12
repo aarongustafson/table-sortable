@@ -479,17 +479,18 @@
 			<section>
 				<h2>Custom Labels (Localization)</h2>
 				<p>
-					Customize screen reader announcements using the
-					<code>label-sortable</code>, <code>label-ascending</code>, and
-					<code>label-descending</code> attributes. Perfect for localization.
-          Note that <code>label-ascending</code> and
+					Use <code>label-sortable</code> to describe unsorted column buttons.
+					Use <code>label-ascending</code> and
+					<code>label-descending</code> to describe the active column and
+					customize sort-change announcements. Note that
+					<code>label-ascending</code> and
 					<code>label-descending</code> will be prefixed by the column name.
 				</p>
 
 			<div class="demo-section">
 				<h3>French Localization</h3>
 				<pre><code>&lt;table-sortable
-  <mark>label-sortable="Cliquer pour trier"</mark>
+  <mark>label-sortable="Cliquer pour trier par ordre croissant"</mark>
   <mark>label-ascending="trié croissant. Cliquer pour trier décroissant"</mark>
   <mark>label-descending="trié décroissant. Cliquer pour trier croissant"</mark>&gt;
   &lt;table&gt;
@@ -504,7 +505,7 @@
 &lt;/table-sortable&gt;</code></pre>
 				<div class="demo">
 					<table-sortable
-						label-sortable="Cliquer pour trier"
+						label-sortable="Cliquer pour trier par ordre croissant"
 						label-ascending="trié croissant. Cliquer pour trier décroissant"
 						label-descending="trié décroissant. Cliquer pour trier croissant"
 					>

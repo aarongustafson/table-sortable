@@ -10,13 +10,15 @@
  *
  * @slot - Default slot for the table element
  *
- * @attr {string} label-sortable - Custom label for sortable columns (default: "Click to sort")
+ * @attr {string} label-sortable - Custom label for sortable columns (default: "Click to sort ascending")
  * @attr {string} label-ascending - Custom label for ascending sort (default: "sorted ascending. Click to sort descending")
  * @attr {string} label-descending - Custom label for descending sort (default: "sorted descending. Click to sort ascending")
  *
  * @cssprop --table-sortable-indicator-asc - Ascending sort indicator (default: ↑)
  * @cssprop --table-sortable-indicator-desc - Descending sort indicator (default: ↓)
  */
+let nextDescriptionId = 0;
+
 export class TableSortableElement extends HTMLElement {
 	/**
 	 * Inject default styles for sort indicators
@@ -38,6 +40,17 @@ export class TableSortableElement extends HTMLElement {
 			}
 			table-sortable thead th[aria-sort="descending"] button::after {
 				content: var(--sort-indicator-desc, '↓') / '';
+			}
+			table-sortable .table-sortable-description {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				padding: 0;
+				margin: -1px;
+				overflow: hidden;
+				clip: rect(0, 0, 0, 0);
+				white-space: nowrap;
+				border: 0;
 			}
 		`;
 		document.head.appendChild(style);
@@ -71,6 +84,12 @@ export class TableSortableElement extends HTMLElement {
 		super();
 		this._handleSort = this._handleSort.bind(this);
 		this._handleKeyDown = this._handleKeyDown.bind(this);
+		this._descriptionId = ++nextDescriptionId;
+		this._descriptionIds = {
+			sortable: `table-sortable-description-${this._descriptionId}-sortable`,
+			ascending: `table-sortable-description-${this._descriptionId}-ascending`,
+			descending: `table-sortable-description-${this._descriptionId}-descending`,
+		};
 		this._announcementTimeout = null;
 		this._pendingInitFrame = null;
 	}
@@ -150,19 +169,35 @@ export class TableSortableElement extends HTMLElement {
 		if (!this._table) return;
 
 		const headers = this._table.querySelectorAll('thead th');
+		const descriptions = Object.entries(this._descriptionIds).map(
+			([state, id]) => {
+				const description = document.createElement('span');
+				description.id = id;
+				description.className = 'table-sortable-description';
+				description.textContent = this._getLabel(state);
+				return description;
+			},
+		);
+
 		headers.forEach((th) => {
 			// Create a button for the header
 			const button = document.createElement('button');
 			button.type = 'button';
 			button.textContent = th.textContent.trim();
+			button.setAttribute(
+				'aria-describedby',
+				this._descriptionIds.sortable,
+			);
 
-			// Clear th and append button
+			// Clear th and append accessible controls
 			th.textContent = '';
 			th.appendChild(button);
 
 			// Set aria-sort attribute
 			th.setAttribute('aria-sort', 'none');
 		});
+
+		headers[0]?.append(...descriptions);
 	}
 
 	/**
@@ -171,7 +206,7 @@ export class TableSortableElement extends HTMLElement {
 	 */
 	_getLabel(type) {
 		const defaults = {
-			sortable: 'Click to sort',
+			sortable: 'Click to sort ascending',
 			ascending: 'sorted ascending. Click to sort descending',
 			descending: 'sorted descending. Click to sort ascending',
 		};
@@ -355,7 +390,7 @@ export class TableSortableElement extends HTMLElement {
 		);
 
 		// Announce to screen readers
-		const headerText = th.textContent.trim();
+		const headerText = button.textContent.trim();
 		this._announceSort(headerText, direction);
 	}
 
@@ -389,6 +424,12 @@ export class TableSortableElement extends HTMLElement {
 		allHeaders.forEach((header) => {
 			header.classList.remove('active', 'up', 'down');
 			header.setAttribute('aria-sort', 'none');
+			header
+				.querySelector('button')
+				?.setAttribute(
+					'aria-describedby',
+					this._descriptionIds.sortable,
+				);
 		});
 
 		// Clear sorted class from all cols
@@ -403,6 +444,14 @@ export class TableSortableElement extends HTMLElement {
 			'aria-sort',
 			direction === 1 ? 'ascending' : 'descending',
 		);
+		activeHeader
+			.querySelector('button')
+			?.setAttribute(
+				'aria-describedby',
+				this._descriptionIds[
+					direction === 1 ? 'ascending' : 'descending'
+				],
+			);
 
 		// Add sorted class to corresponding col
 		if (this._colgroup) {
@@ -421,14 +470,18 @@ export class TableSortableElement extends HTMLElement {
 			}
 
 			const sortKey = TableSortableElement._findSortKey(cell);
-			const numericValue = parseInt(sortKey, 10);
+			const normalizedSortKey = sortKey.trim();
+			const isNumeric = /^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(
+				normalizedSortKey,
+			);
+			const numericValue = isNumeric
+				? Number(normalizedSortKey)
+				: Number.NaN;
 
 			// Use numeric comparison if the value is a valid number
-			row._sortKey =
-				!isNaN(numericValue) &&
-				numericValue.toString() === sortKey.trim()
-					? numericValue
-					: sortKey;
+			row._sortKey = Number.isFinite(numericValue)
+				? numericValue
+				: sortKey;
 		});
 
 		// Sort rows

@@ -37,15 +37,15 @@
 							"type": {
 								"text": "string"
 							},
-							"description": "Custom label for sortable columns (default: 'Click to sort'). Used in screen reader announcements.",
-							"default": "\"Click to sort\""
+							"description": "Accessible description for an unsorted column button (default: 'Click to sort ascending'). Each button references the shared description with aria-describedby.",
+							"default": "\"Click to sort ascending\""
 						},
 						{
 							"name": "label-ascending",
 							"type": {
 								"text": "string"
 							},
-							"description": "Custom label for ascending sort state (default: 'sorted ascending. Click to sort descending'). Used in screen reader announcements.",
+							"description": "Accessible description and announcement for the ascending sort state (default: 'sorted ascending. Click to sort descending').",
 							"default": "\"sorted ascending. Click to sort descending\""
 						},
 						{
@@ -53,7 +53,7 @@
 							"type": {
 								"text": "string"
 							},
-							"description": "Custom label for descending sort state (default: 'sorted descending. Click to sort ascending'). Used in screen reader announcements.",
+							"description": "Accessible description and announcement for the descending sort state (default: 'sorted descending. Click to sort ascending').",
 							"default": "\"sorted descending. Click to sort ascending\""
 						},
 						{

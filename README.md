@@ -256,15 +256,15 @@ The component supports attributes for customizing screen reader announcements:
 
 | Attribute | Description | Default |
 |-----------|-------------|---------|
-| `label-sortable` | Label for unsorted columns | "Click to sort" |
-| `label-ascending` | Label when sorted ascending | "sorted ascending. Click to sort descending" |
-| `label-descending` | Label when sorted descending | "sorted descending. Click to sort ascending" |
+| `label-sortable` | Accessible description for an unsorted column button | "Click to sort ascending" |
+| `label-ascending` | Accessible description and announcement when sorted ascending | "sorted ascending. Click to sort descending" |
+| `label-descending` | Accessible description and announcement when sorted descending | "sorted descending. Click to sort ascending" |
 
 ### Example Localization
 
 ```html
 <table-sortable
-  label-sortable="Cliquez pour trier"
+  label-sortable="Cliquez pour trier par ordre croissant"
   label-ascending="trié croissant. Cliquez pour trier décroissant"
   label-descending="trié décroissant. Cliquez pour trier croissant">
   <table>
