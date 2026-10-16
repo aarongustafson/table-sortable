@@ -104,19 +104,68 @@
 				color: ButtonText;
 			}
 
-			.grouped-table tbody:nth-of-type(odd) tr:nth-child(even) {
-				background-color: #cccccc33;
+			.grouped-table tbody tr[data-demo-stripe='odd'] {
+				background-color: #cccccc55;
 				color: ButtonText;
 			}
 
-			.grouped-table tbody:nth-of-type(even) tr:nth-child(even) {
-				background-color: #2e8b5740;
+			.grouped-table tbody tr[data-demo-stripe='even'] {
+				background-color: #cccccc22;
 				color: ButtonText;
 			}
 
-			.grouped-table tbody tr:nth-child(odd) {
-				background-color: transparent;
-				color: ButtonText;
+			.grouped-table
+				tbody:nth-of-type(odd)
+				tr[data-demo-stripe='odd'] {
+				--grouped-sorted-cell-background: color-mix(
+					in srgb,
+					rebeccapurple 55%,
+					Canvas
+				);
+			}
+
+			.grouped-table
+				tbody:nth-of-type(odd)
+				tr[data-demo-stripe='even'] {
+				--grouped-sorted-cell-background: color-mix(
+					in srgb,
+					rebeccapurple 30%,
+					Canvas
+				);
+			}
+
+			.grouped-table
+				tbody:nth-of-type(even)
+				tr[data-demo-stripe='odd'] {
+				--grouped-sorted-cell-background: color-mix(
+					in srgb,
+					seagreen 55%,
+					Canvas
+				);
+			}
+
+			.grouped-table
+				tbody:nth-of-type(even)
+				tr[data-demo-stripe='even'] {
+				--grouped-sorted-cell-background: color-mix(
+					in srgb,
+					seagreen 30%,
+					Canvas
+				);
+			}
+
+			.grouped-table:has(col:nth-child(1).sorted)
+				tbody
+				td:nth-child(1),
+			.grouped-table:has(col:nth-child(2).sorted)
+				tbody
+				td:nth-child(2),
+			.grouped-table:has(col:nth-child(3).sorted)
+				tbody
+				td:nth-child(3) {
+				background-color: var(
+					--grouped-sorted-cell-background
+				);
 			}
 
 			.note {
@@ -515,9 +564,9 @@
 						When sorting, the component rebuilds the
 						<code>&lt;tbody&gt;</code> elements from these effective group
 						values; the original body structure alone does not define groups.
-						This demo alternates each generated body's stripe palette between
-						neutral and green. The translucent stripes preserve the active
-						column highlight beneath them.
+						All rows retain the same neutral dark/light striping. In the
+						sorted column, odd bodies use dark/light purple cells and even
+						bodies use dark/light green cells.
 					</div>
 				</div>
 			</section>
@@ -695,6 +744,24 @@
 
 		<script src="../define.js" type="module"></script>
 		<script>
+			const groupedDemo = document
+				.querySelector('.grouped-table')
+				.closest('table-sortable');
+			const applyGroupedStripes = () => {
+				groupedDemo
+					.querySelectorAll('tbody tr')
+					.forEach((row, index) => {
+						row.dataset.demoStripe =
+							index % 2 === 0 ? 'odd' : 'even';
+					});
+			};
+
+			applyGroupedStripes();
+			groupedDemo.addEventListener(
+				'table-sortable:sort',
+				applyGroupedStripes,
+			);
+
 			// Event handling demo
 			const eventDemo = document.getElementById('event-demo');
 			const eventMessages = document.getElementById('event-messages');
