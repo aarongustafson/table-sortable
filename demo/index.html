@@ -104,18 +104,19 @@
 				color: ButtonText;
 			}
 
-			.grouped-table tbody:nth-of-type(even) tr {
-				background-color: color-mix(
-					in srgb,
-					#2e8b57 20%,
-					Canvas
-				);
-				color: CanvasText;
+			.grouped-table tbody:nth-of-type(odd) tr:nth-child(even) {
+				background-color: #cccccc33;
+				color: ButtonText;
 			}
 
-			.grouped-table tbody:nth-of-type(odd) tr {
+			.grouped-table tbody:nth-of-type(even) tr:nth-child(even) {
+				background-color: #2e8b5740;
+				color: ButtonText;
+			}
+
+			.grouped-table tbody tr:nth-child(odd) {
 				background-color: transparent;
-				color: CanvasText;
+				color: ButtonText;
 			}
 
 			.note {
@@ -514,8 +515,9 @@
 						When sorting, the component rebuilds the
 						<code>&lt;tbody&gt;</code> elements from these effective group
 						values; the original body structure alone does not define groups.
-						This demo alternates those generated bodies with a green tint so
-						each group remains visually distinct.
+						This demo alternates each generated body's stripe palette between
+						neutral and green. The translucent stripes preserve the active
+						column highlight beneath them.
 					</div>
 				</div>
 			</section>
