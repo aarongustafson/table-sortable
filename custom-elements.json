@@ -8,7 +8,7 @@
 			"declarations": [
 				{
 					"kind": "class",
-					"description": "A web component to enable users to sort table data by clicking on column headers. Built with accessibility in mind, featuring keyboard navigation, screen reader announcements, and light DOM manipulation.\n\nBased on the original jquery.easy-sortable-tables.js by Aaron Gustafson.",
+					"description": "A web component to enable users to sort table data by clicking on column headers. Built with accessibility in mind, featuring keyboard navigation, native sort semantics, described controls, and light DOM manipulation.\n\nBased on the original jquery.easy-sortable-tables.js by Aaron Gustafson.",
 					"name": "TableSortableElement",
 					"slots": [
 						{
@@ -45,7 +45,7 @@
 							"type": {
 								"text": "string"
 							},
-							"description": "Accessible description and announcement for the ascending sort state (default: 'sorted ascending. Click to sort descending').",
+							"description": "Accessible description for the ascending sort state (default: 'sorted ascending. Click to sort descending').",
 							"default": "\"sorted ascending. Click to sort descending\""
 						},
 						{
@@ -53,7 +53,7 @@
 							"type": {
 								"text": "string"
 							},
-							"description": "Accessible description and announcement for the descending sort state (default: 'sorted descending. Click to sort ascending').",
+							"description": "Accessible description for the descending sort state (default: 'sorted descending. Click to sort ascending').",
 							"default": "\"sorted descending. Click to sort ascending\""
 						},
 						{
