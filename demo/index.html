@@ -67,6 +67,33 @@
 				content: var(--table-sortable-indicator-desc, '↓') / '';
 			}
 
+			table-sortable.svg-sort-indicators
+				thead
+				th
+				button::after {
+				background: center / 1.25rem 1.75rem no-repeat
+					url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 24'%3E%3Cpath d='M3 9 8 4l5 5M3 15l5 5 5-5' fill='none' stroke='%23222' stroke-width='1.5'/%3E%3C/svg%3E");
+				content: '';
+				inline-size: 1.25rem;
+				block-size: 1.75rem;
+			}
+
+			table-sortable.svg-sort-indicators
+				thead
+				th[aria-sort='ascending']
+				button::after {
+				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 24'%3E%3Cpath d='M2 10 8 3l6 7Z' fill='%23222'/%3E%3Cpath d='m3 15 5 5 5-5' fill='none' stroke='%23222' stroke-width='1.5'/%3E%3C/svg%3E");
+				content: '';
+			}
+
+			table-sortable.svg-sort-indicators
+				thead
+				th[aria-sort='descending']
+				button::after {
+				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 24'%3E%3Cpath d='M3 9 8 4l5 5' fill='none' stroke='%23222' stroke-width='1.5'/%3E%3Cpath d='m2 14 6 7 6-7Z' fill='%23222'/%3E%3C/svg%3E");
+				content: '';
+			}
+
 			/* Highlight sorted column */
 			col.sorted {
 				background-color: rebeccapurple;
@@ -75,6 +102,20 @@
 			tbody tr:nth-child(even) {
 				background-color: #cccccc33;
 				color: ButtonText;
+			}
+
+			.grouped-table tbody:nth-of-type(even) tr {
+				background-color: color-mix(
+					in srgb,
+					#2e8b57 20%,
+					Canvas
+				);
+				color: CanvasText;
+			}
+
+			.grouped-table tbody:nth-of-type(odd) tr {
+				background-color: transparent;
+				color: CanvasText;
 			}
 
 			.note {
@@ -97,7 +138,7 @@
 			<p>
 				A web component to enable users to sort table data by clicking
 				on column headers. Built with accessibility in mind, supporting
-				keyboard navigation and screen reader announcements. See the
+				keyboard navigation and native sort semantics. See the
 				<a
 					href="https://github.com/aarongustafson/table-sortable/blob/main/README.md"
 					>README</a
@@ -113,13 +154,15 @@
 				<p>
 					The component automatically enhances plain table headers by
 					injecting buttons. You don't need to add buttons or links to
-					your markup!
+					your markup. This example uses decorative SVG caret pairs:
+					the active direction is filled and the other direction
+					remains outlined.
 				</p>
 
 			<div class="demo-section">
 				<h3>Auto-Enhanced Table</h3>
 				<div class="code-demo-pair">
-					<pre><code>&lt;table-sortable&gt;
+					<pre><code>&lt;table-sortable class="svg-sort-indicators"&gt;
   &lt;table&gt;
     &lt;thead&gt;
       &lt;tr&gt;
@@ -139,7 +182,7 @@
   &lt;/table&gt;
 &lt;/table-sortable&gt;</code></pre>
 					<div class="demo">
-						<table-sortable>
+						<table-sortable class="svg-sort-indicators">
 							<table>
 								<thead>
 									<tr>
@@ -368,7 +411,7 @@
 &lt;/tbody&gt;</code></pre>
 				<div class="demo">
 					<table-sortable>
-						<table>
+						<table class="grouped-table">
 							<thead>
 								<tr>
 									<th>Name</th>
@@ -471,6 +514,8 @@
 						When sorting, the component rebuilds the
 						<code>&lt;tbody&gt;</code> elements from these effective group
 						values; the original body structure alone does not define groups.
+						This demo alternates those generated bodies with a green tint so
+						each group remains visually distinct.
 					</div>
 				</div>
 			</section>
@@ -482,9 +527,7 @@
 					Use <code>label-sortable</code> to describe unsorted column buttons.
 					Use <code>label-ascending</code> and
 					<code>label-descending</code> to describe the active column and
-					customize sort-change announcements. Note that
-					<code>label-ascending</code> and
-					<code>label-descending</code> will be prefixed by the column name.
+					the next available action.
 				</p>
 
 			<div class="demo-section">
@@ -537,12 +580,10 @@
 						</table>
 					</table-sortable>
 					<div class="note">
-						<strong>Note:</strong> The custom labels are announced to screen
-						readers. Click a column header and check your screen reader to hear
-						the French announcements. In Chromium browsers that support
-						<code>ariaNotify()</code>, run
-						<code>monitor(Element.prototype.ariaNotify)</code> in DevTools to
-						observe the notification calls.
+						<strong>Note:</strong> Each sort button references the localized
+						description for its current state and next action. The active
+						header also exposes its direction through
+						<code>aria-sort</code>.
 					</div>
 				</div>
 			</div>
@@ -561,7 +602,6 @@
 					All examples on this page demonstrate this approach - just plain
 					<code>&lt;th&gt;</code> elements that get enhanced with sorting functionality.
 				</p>
-			</section>
 			</section>
 
 			<!-- Event Handling -->
