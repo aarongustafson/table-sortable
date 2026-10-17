@@ -2,14 +2,14 @@
 
 [![npm version](https://img.shields.io/npm/v/@aarongustafson/table-sortable.svg)](https://www.npmjs.com/package/@aarongustafson/table-sortable) [![Build Status](https://img.shields.io/github/actions/workflow/status/aarongustafson/table-sortable/ci.yml?branch=main)](https://github.com/aarongustafson/table-sortable/actions)
 
-A web component to enable users to sort table data by clicking on column headers. Built with accessibility in mind, featuring keyboard navigation, screen reader announcements, and light DOM manipulation.
+A web component to enable users to sort table data by clicking on column headers. Built with accessibility in mind, featuring keyboard navigation, native sort semantics, and light DOM manipulation.
 
 Based on the original [jquery.easy-sortable-tables.js](https://github.com/easy-designs/jquery.easy-sortable-tables.js) by Aaron Gustafson.
 
 ## Features
 
 - ✅ **Accessible**: Full keyboard navigation support with Enter/Space activation
-- ✅ **Screen Reader Friendly**: Announces sort changes with `ariaNotify()` or a live-region fallback
+- ✅ **Screen Reader Friendly**: Exposes sort changes with `aria-sort` and described buttons
 - ✅ **Light DOM**: No Shadow DOM - works with your existing table markup
 - ✅ **Flexible Sorting**: Supports text, numeric, and custom sort keys
 - ✅ **Grouped Tables**: Keeps related rows together when sorting
@@ -252,13 +252,13 @@ element.addEventListener('table-sortable:sort', (event) => {
 
 ## Attributes
 
-The component supports attributes for customizing screen reader announcements:
+The component supports attributes for customizing sortable-button descriptions:
 
 | Attribute | Description | Default |
 |-----------|-------------|---------|
 | `label-sortable` | Accessible description for an unsorted column button | "Click to sort ascending" |
-| `label-ascending` | Accessible description and announcement when sorted ascending | "sorted ascending. Click to sort descending" |
-| `label-descending` | Accessible description and announcement when sorted descending | "sorted descending. Click to sort ascending" |
+| `label-ascending` | Accessible description when sorted ascending | "sorted ascending. Click to sort descending" |
+| `label-descending` | Accessible description when sorted descending | "sorted descending. Click to sort ascending" |
 
 ### Example Localization
 
@@ -323,10 +323,8 @@ The component is built with accessibility as a priority:
 
 2. **Screen Reader Support**:
    - `aria-sort` attribute indicates column sort state (ascending, descending, none)
-   - Uses the native `ariaNotify()` API when available
-   - Lazily creates an ARIA live-region fallback only when needed
-   - Announces sort changes using customizable labels
-   - Updates are announced politely without interrupting
+   - Sort buttons reference customizable descriptions for their current state and next action
+   - Relies on native table and `aria-sort` support rather than adding a live region, avoiding duplicate announcements in browser and assistive-technology combinations that already report sort changes
 
 3. **Progressive Enhancement**:
    - Automatically creates accessible buttons if none are provided

@@ -90,7 +90,6 @@ export class TableSortableElement extends HTMLElement {
 			ascending: `table-sortable-description-${this._descriptionId}-ascending`,
 			descending: `table-sortable-description-${this._descriptionId}-descending`,
 		};
-		this._announcementTimeout = null;
 		this._pendingInitFrame = null;
 	}
 
@@ -107,10 +106,6 @@ export class TableSortableElement extends HTMLElement {
 			this._pendingInitFrame = null;
 		}
 		this._removeEventListeners();
-		this._removeLiveRegion();
-		if (this._announcementTimeout) {
-			clearTimeout(this._announcementTimeout);
-		}
 	}
 
 	/**
@@ -244,77 +239,12 @@ export class TableSortableElement extends HTMLElement {
 		this._reflectStringAttribute('label-descending', value);
 	}
 
-	/**
-	 * Create a live region for screen reader announcements
-	 * @private
-	 */
-	_createLiveRegion() {
-		if (this._liveRegion) return;
-
-		this._liveRegion = document.createElement('div');
-		this._liveRegion.setAttribute('role', 'status');
-		this._liveRegion.setAttribute('aria-live', 'polite');
-		this._liveRegion.setAttribute('aria-atomic', 'true');
-		this._liveRegion.style.position = 'absolute';
-		this._liveRegion.style.left = '-10000px';
-		this._liveRegion.style.width = '1px';
-		this._liveRegion.style.height = '1px';
-		this._liveRegion.style.overflow = 'hidden';
-		this.appendChild(this._liveRegion);
-	}
-
-	/**
-	 * Remove the live region
-	 * @private
-	 */
-	_removeLiveRegion() {
-		if (this._liveRegion && this._liveRegion.parentNode) {
-			this._liveRegion.parentNode.removeChild(this._liveRegion);
-		}
-		this._liveRegion = null;
-	}
-
 	_initialize() {
 		TableSortableElement._injectStyles();
 		this._setupTable();
 		this._ensureColgroup();
 		this._setupAccessibility();
 		this._addEventListeners();
-	}
-
-	/**
-	 * Send a polite screen reader notification
-	 * @private
-	 */
-	_notify(message) {
-		if (typeof this.ariaNotify === 'function') {
-			this.ariaNotify(message, { priority: 'normal' });
-			return;
-		}
-
-		this._createLiveRegion();
-
-		this._liveRegion.textContent = '';
-
-		if (this._announcementTimeout) {
-			clearTimeout(this._announcementTimeout);
-		}
-
-		this._announcementTimeout = setTimeout(() => {
-			this._liveRegion.textContent = message;
-		}, 100);
-	}
-
-	/**
-	 * Announce sorting change to screen readers
-	 * @private
-	 */
-	_announceSort(headerText, direction) {
-		const directionLabel =
-			direction === 1
-				? this._getLabel('ascending')
-				: this._getLabel('descending');
-		this._notify(`${headerText}, ${directionLabel}`);
 	}
 
 	/**
@@ -388,10 +318,6 @@ export class TableSortableElement extends HTMLElement {
 				},
 			}),
 		);
-
-		// Announce to screen readers
-		const headerText = button.textContent.trim();
-		this._announceSort(headerText, direction);
 	}
 
 	/**

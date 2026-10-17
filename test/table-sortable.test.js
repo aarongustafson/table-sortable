@@ -220,7 +220,7 @@ describe('TableSortableElement', () => {
 			]);
 		});
 
-		it('should defer creating a fallback live region until it is needed', () => {
+		it('should not create a live region', () => {
 			const liveRegion = element.querySelector('[role="status"]');
 			expect(liveRegion).toBeNull();
 		});
@@ -859,7 +859,7 @@ describe('TableSortableElement', () => {
 		});
 	});
 
-	describe('Screen reader announcements', () => {
+	describe('Screen reader sort semantics', () => {
 		beforeEach(async () => {
 			element.innerHTML = `
 				<table>
@@ -874,49 +874,23 @@ describe('TableSortableElement', () => {
 				</table>
 			`;
 			await waitForComponent();
-			element.ariaNotify = undefined;
-			vi.useFakeTimers();
 		});
 
-		afterEach(() => {
-			vi.useRealTimers();
-		});
-
-		it('should announce sort changes to screen readers', () => {
-			expect(element._liveRegion).toBeFalsy();
-
-			const nameLink = element.querySelector('thead th button');
-			nameLink.click();
-
-			vi.advanceTimersByTime(150);
-
-			const liveRegion = element._liveRegion;
-			expect(liveRegion.textContent).toContain('Name');
-			expect(liveRegion.textContent).toContain('ascending');
-		});
-
-		it('should use ariaNotify without creating a live region when supported', () => {
+		it('should rely on aria-sort and descriptions without programmatic announcements', () => {
 			element.ariaNotify = vi.fn();
 
 			const nameLink = element.querySelector('thead th button');
 			nameLink.click();
 
-			expect(element.ariaNotify).toHaveBeenCalledWith(
-				'Name, sorted ascending. Click to sort descending',
-				{ priority: 'normal' },
-			);
+			expect(element.ariaNotify).not.toHaveBeenCalled();
 			expect(element._liveRegion).toBeFalsy();
-		});
-
-		it('should announce descending sort', () => {
-			const nameLink = element.querySelector('thead th button');
-			nameLink.click();
-			nameLink.click();
-
-			vi.advanceTimersByTime(150);
-
-			const liveRegion = element._liveRegion;
-			expect(liveRegion.textContent).toContain('descending');
+			expect(nameLink.closest('th').getAttribute('aria-sort')).toBe(
+				'ascending',
+			);
+			const description = element.querySelector(
+				`#${nameLink.getAttribute('aria-describedby')}`,
+			);
+			expect(description.textContent).toContain('sorted ascending');
 		});
 	});
 
@@ -1034,20 +1008,6 @@ describe('TableSortableElement', () => {
 			await waitForComponent();
 		});
 
-		it('should use custom labels in screen reader announcements', () => {
-			vi.useFakeTimers();
-
-			const nameLink = element.querySelector('thead th button');
-			nameLink.click();
-
-			vi.advanceTimersByTime(150);
-
-			const liveRegion = element._liveRegion;
-			expect(liveRegion.textContent).toContain('trié croissant');
-
-			vi.useRealTimers();
-		});
-
 		it('should use custom labels for each described sort state', () => {
 			const button = element.querySelector('thead th button');
 			let description = element.querySelector(
@@ -1096,33 +1056,6 @@ describe('TableSortableElement', () => {
 
 			// Event should still fire (it's on the element), but this confirms cleanup happened
 			expect(element.parentNode).toBeNull();
-		});
-
-		it('should remove live region on disconnect', async () => {
-			element.innerHTML = `
-				<table>
-					<thead>
-						<tr>
-							<th>Name</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr><td>Alice</td></tr>
-					</tbody>
-				</table>
-			`;
-			await waitForComponent();
-			element.ariaNotify = undefined;
-
-			const nameLink = element.querySelector('thead th button');
-			nameLink.click();
-
-			const liveRegion = element._liveRegion;
-			expect(liveRegion).toBeTruthy();
-
-			element.remove();
-
-			expect(liveRegion.parentNode).toBeNull();
 		});
 	});
 });
