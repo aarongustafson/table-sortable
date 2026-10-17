@@ -71,9 +71,10 @@
 				thead
 				th
 				button::after {
-				background: center / 1.25rem 1.75rem no-repeat
-					url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 24'%3E%3Cpath d='M3 9 8 4l5 5M3 15l5 5 5-5' fill='none' stroke='%23222' stroke-width='1.5'/%3E%3C/svg%3E");
-				content: '';
+				content:
+					url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 24' color='CanvasText'%3E%3Cpath d='M3 9 8 4l5 5M3 15l5 5 5-5' fill='none' stroke='currentColor' stroke-width='1.5'/%3E%3C/svg%3E")
+					/
+					'Not sorted';
 				inline-size: 1.25rem;
 				block-size: 1.75rem;
 			}
@@ -82,16 +83,47 @@
 				thead
 				th[aria-sort='ascending']
 				button::after {
-				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 24'%3E%3Cpath d='M2 10 8 3l6 7Z' fill='%23222'/%3E%3Cpath d='m3 15 5 5 5-5' fill='none' stroke='%23222' stroke-width='1.5'/%3E%3C/svg%3E");
-				content: '';
+				content:
+					url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 24' color='CanvasText'%3E%3Cpath d='M2 10 8 3l6 7Z' fill='currentColor'/%3E%3Cpath d='m3 15 5 5 5-5' fill='none' stroke='currentColor' stroke-width='1.5'/%3E%3C/svg%3E")
+					/
+					'Sorted ascending';
 			}
 
 			table-sortable.svg-sort-indicators
 				thead
 				th[aria-sort='descending']
 				button::after {
-				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 24'%3E%3Cpath d='M3 9 8 4l5 5' fill='none' stroke='%23222' stroke-width='1.5'/%3E%3Cpath d='m2 14 6 7 6-7Z' fill='%23222'/%3E%3C/svg%3E");
-				content: '';
+				content:
+					url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 24' color='CanvasText'%3E%3Cpath d='M3 9 8 4l5 5' fill='none' stroke='currentColor' stroke-width='1.5'/%3E%3Cpath d='m2 14 6 7 6-7Z' fill='currentColor'/%3E%3C/svg%3E")
+					/
+					'Sorted descending';
+			}
+
+			@media (forced-colors: active) {
+				table-sortable.svg-sort-indicators
+					thead
+					th
+					button::after {
+					block-size: auto;
+					color: ButtonText;
+					content: '△\A▽' / 'Not sorted';
+					line-height: 0.75;
+					white-space: pre;
+				}
+
+				table-sortable.svg-sort-indicators
+					thead
+					th[aria-sort='ascending']
+					button::after {
+					content: '▲\A▽' / 'Sorted ascending';
+				}
+
+				table-sortable.svg-sort-indicators
+					thead
+					th[aria-sort='descending']
+					button::after {
+					content: '△\A▼' / 'Sorted descending';
+				}
 			}
 
 			/* Highlight sorted column */
