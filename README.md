@@ -8,7 +8,7 @@ Based on the original [jquery.easy-sortable-tables.js](https://github.com/easy-d
 
 ## Features
 
-- ✅ **Accessible**: Full keyboard navigation support with Enter/Space activation
+- ✅ **Keyboard Controls**: Native header buttons with Enter/Space activation
 - ✅ **Screen Reader Friendly**: Exposes sort changes with `aria-sort` and described buttons
 - ✅ **Light DOM**: No Shadow DOM - works with your existing table markup
 - ✅ **Flexible Sorting**: Supports text, numeric, and custom sort keys
@@ -44,6 +44,10 @@ import { TableSortableElement } from '@aarongustafson/table-sortable';
 customElements.define('my-custom-name', TableSortableElement);
 ```
 
+The shared indicator and visually hidden description styles target
+`table-sortable`. If you choose another tag, provide equivalent styles for that
+tag, including `.table-sortable-description`. The demos use the default tag.
+
 ### Option 2: Auto-define the custom element (browser environments only)
 
 Use the guarded definition helper to register the element when `customElements` is available:
@@ -52,7 +56,8 @@ Use the guarded definition helper to register the element when `customElements` 
 import '@aarongustafson/table-sortable/define.js';
 ```
 
-If you prefer to control when the element is registered, call the helper directly:
+Importing the helper module registers `table-sortable`, including when you use a
+named import. Calling the helper again is safe for the same tag:
 
 ```javascript
 import { defineTableSortable } from '@aarongustafson/table-sortable/define.js';
@@ -60,10 +65,18 @@ import { defineTableSortable } from '@aarongustafson/table-sortable/define.js';
 defineTableSortable();
 ```
 
+The helper returns `false` without a usable browser custom-element registry,
+otherwise `true`. Its optional `tagName` argument defaults to `table-sortable`.
+Use the class-only import to control registration timing. A constructor can’t
+be registered under multiple names in the same registry.
+
 You can also include the guarded script from HTML:
 
 ```html
-<script src="./node_modules/@aarongustafson/table-sortable/define.js" type="module"></script>
+<script
+  src="./node_modules/@aarongustafson/table-sortable/define.js"
+  type="module"
+></script>
 ```
 
 ### Basic Example
@@ -71,8 +84,11 @@ You can also include the guarded script from HTML:
 Wrap your existing table in a `<table-sortable>` element. The component uses **progressive enhancement** - it will automatically inject sortable buttons into table headers:
 
 ```html
-<table-sortable>
+<table-sortable tabindex="0" role="region" aria-label="People table">
   <table>
+    <caption>
+      People and cities
+    </caption>
     <thead>
       <tr>
         <th>Name</th>
@@ -101,7 +117,15 @@ Wrap your existing table in a `<table-sortable>` element. The component uses **p
 </table-sortable>
 ```
 
-The component uses **pure progressive enhancement** - it automatically creates accessible `<button>` elements inside each `<th>` for sorting. You don't need to add any buttons or links manually.
+Without JavaScript, or if the module fails to load, the native table remains
+readable in its authored order. After registration, initialization runs in an
+animation frame. The component replaces each `<thead>` header’s contents with a button
+using that header’s trimmed text. Use plain text headers, not existing links,
+buttons, or markup you need to preserve.
+
+The named, focusable region is authored markup, not something the component
+adds. With the overflow styles below, keyboard users can focus that region and
+scroll a wide table without losing columns.
 
 ## Advanced Usage
 
@@ -133,6 +157,7 @@ Use the `data-sort-value` attribute to specify a custom value to sort by, differ
 ```
 
 This is useful for:
+
 - Sorting formatted numbers (currency, percentages)
 - Sorting dates by ISO format while displaying a friendly format
 - Custom sorting logic (e.g., priority: High > Medium > Low)
@@ -201,15 +226,14 @@ To keep related rows together while sorting, add the same
 </table-sortable>
 ```
 
-The attribute belongs on each row, not on `<tbody>`, because sorting removes
-the original `<tbody>` elements and rebuilds them. The row-level value preserves
-each row's group membership while rows move. After sorting, rows with the same
-value are collected into a new `<tbody>`.
+Sorting moves the original row nodes into new `<tbody>` elements. Rows with
+the same effective group value stay together. The original body attributes,
+apart from the effective group key, aren’t copied.
 
 Use a normal `<tbody>` around the table's data rows, as shown above. You do not
 need to provide a separate `<tbody>` for each group. Separate `<tbody>` elements
 are allowed in the initial markup, but they do not define the groups; the
-`data-table-sort-group` values on the rows do.
+`data-table-sort-group` values on the rows or inherited from a body do.
 
 As a shorthand, you can put `data-table-sort-group` on a `<tbody>` to give all
 of its rows the same group:
@@ -235,8 +259,8 @@ each generated `<tbody>` so the grouping is preserved across subsequent sorts.
 
 The component fires custom events that you can listen to:
 
-| Event | Description | Detail |
-|-------|-------------|--------|
+| Event                 | Description                   | Detail                                                              |
+| --------------------- | ----------------------------- | ------------------------------------------------------------------- |
 | `table-sortable:sort` | Fired when a column is sorted | `{ column: number, direction: 'asc'\|'desc', header: HTMLElement }` |
 
 ### Example Event Handling
@@ -246,7 +270,10 @@ const element = document.querySelector('table-sortable');
 
 element.addEventListener('table-sortable:sort', (event) => {
   const { column, direction, header } = event.detail;
-  console.log(`Sorted column ${column} (${header.textContent}) in ${direction}ending order`);
+  const columnName = header.querySelector('button').textContent.trim();
+  console.log(
+    `Sorted column ${column} (${columnName}) in ${direction}ending order`,
+  );
 });
 ```
 
@@ -254,19 +281,33 @@ element.addEventListener('table-sortable:sort', (event) => {
 
 The component supports attributes for customizing sortable-button descriptions:
 
-| Attribute | Description | Default |
-|-----------|-------------|---------|
-| `label-sortable` | Accessible description for an unsorted column button | "Click to sort ascending" |
-| `label-ascending` | Accessible description when sorted ascending | "sorted ascending. Click to sort descending" |
-| `label-descending` | Accessible description when sorted descending | "sorted descending. Click to sort ascending" |
+| Attribute          | Description                                          | Default                                      |
+| ------------------ | ---------------------------------------------------- | -------------------------------------------- |
+| `label-sortable`   | Accessible description for an unsorted column button | "Click to sort ascending"                    |
+| `label-ascending`  | Accessible description when sorted ascending         | "sorted ascending. Click to sort descending" |
+| `label-descending` | Accessible description when sorted descending        | "sorted descending. Click to sort ascending" |
+
+Set labels before initialization. The reflected properties are
+`labelSortable`, `labelAscending`, and `labelDescending`; each reads as
+`string | null`. Assigning `null`, `undefined`, or `''` removes the attribute.
+Missing or empty attributes use the English defaults above. Later attribute
+or property changes don’t update the descriptions already rendered.
+
+Cell keys (`data-sort-value` and `data-sort-as`) and row/body groups
+(`data-table-sort-group`) belong on the nested table markup, not on the host.
+An explicit cell value wins over an inline sort key, which leads the remaining
+cell text. The component doesn’t generate a caption or region label; author
+those in the table’s language too.
 
 ### Example Localization
 
 ```html
 <table-sortable
+  lang="fr"
   label-sortable="Cliquez pour trier par ordre croissant"
   label-ascending="trié croissant. Cliquez pour trier décroissant"
-  label-descending="trié décroissant. Cliquez pour trier croissant">
+  label-descending="trié décroissant. Cliquez pour trier croissant"
+>
   <table>
     <!-- table content -->
   </table>
@@ -277,21 +318,28 @@ The component supports attributes for customizing sortable-button descriptions:
 
 The component uses light DOM, so you can style the table normally with CSS. The component adds these classes to help style sort indicators:
 
-| Class | Applied To | Description |
-|-------|-----------|-------------|
-| `active` | `<th>` | The currently sorted column |
-| `up` | `<th>` | Column sorted in ascending order |
-| `down` | `<th>` | Column sorted in descending order |
-| `sorted` | `<col>` | The currently sorted column (for column styling) |
+| Class    | Applied To | Description                                      |
+| -------- | ---------- | ------------------------------------------------ |
+| `active` | `<th>`     | The currently sorted column                      |
+| `up`     | `<th>`     | Column sorted in ascending order                 |
+| `down`   | `<th>`     | Column sorted in descending order                |
+| `sorted` | `<col>`    | The currently sorted column (for column styling) |
 
 ### CSS Custom Properties
 
 The component supports CSS custom properties for visual indicators:
 
-| Property | Description | Default |
-|----------|-------------|---------||
-| `--table-sortable-indicator-asc` | Ascending sort indicator | `↑` |
-| `--table-sortable-indicator-desc` | Descending sort indicator | `↓` |
+| Property                          | Description                | Default |
+| --------------------------------- | -------------------------- | ------- |
+| `--table-sortable-indicator-asc`  | Ascending sort indicator   | `↑`     |
+| `--table-sortable-indicator-desc` | Descending sort indicator  | `↓`     |
+| `--sort-indicator-asc`            | Legacy ascending fallback  | `↑`     |
+| `--sort-indicator-desc`           | Legacy descending fallback | `↓`     |
+
+The `--table-sortable-*` properties take precedence over their legacy
+`--sort-indicator-*` counterparts. These values must be CSS strings, including
+quotes. Decorative indicators use an empty CSS alternative; the button
+description and `aria-sort` expose the state.
 
 ### Example Styling
 
@@ -302,16 +350,82 @@ table-sortable {
   --table-sortable-indicator-desc: '▼';
 }
 
-/* Style active column header */
-thead th.active {
-  background-color: #e3f2fd;
+table-sortable:not([hidden]) {
+  display: block;
+  max-inline-size: 100%;
+  overflow-x: auto;
 }
 
-/* Highlight sorted column */
-col.sorted {
-  background-color: rgba(0, 102, 204, 0.05);
+table {
+  min-inline-size: 28rem;
+  background: Canvas;
+  color: CanvasText;
+}
+
+td {
+  background: Canvas;
+  color: CanvasText;
+}
+
+th {
+  background-color: Canvas;
+  background-image: linear-gradient(ButtonFace, ButtonFace);
+  color: ButtonText;
+}
+
+thead th {
+  padding: 0;
+  block-size: 1px;
+}
+
+thead th button {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  inline-size: 100%;
+  block-size: 100%;
+  background: transparent;
+  color: inherit;
+  border: 0;
+  border-radius: 0;
+  padding: 0.5rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+thead th[aria-sort='ascending'],
+thead th[aria-sort='descending'] {
+  background: CanvasText;
+  color: Canvas;
+}
+
+/* Paint the cells, not a column hidden behind cell backgrounds. */
+table:has(col:nth-child(1).sorted) tbody td:nth-child(1),
+table:has(col:nth-child(2).sorted) tbody td:nth-child(2) {
+  background: CanvasText;
+  color: Canvas;
 }
 ```
+
+Extend the sorted-cell selectors for each additional column. Without `:has()`,
+the table keeps readable cells and header indicators, but omits the column
+fill. See [the shared demo table styles](./demo/tables.css) for four-column
+selectors, neutral striping, group separators, and SVG masks that follow
+`currentColor`. Browsers without mask support keep the text indicators; forced
+colors use outlined/filled Unicode caret pairs instead.
+
+The header button fills the cell without an inset border. The small specified
+cell height lets the button’s percentage height follow the row’s used height;
+wrapped labels still expand the row. The browser’s focus indicator is retained.
+
+The base component doesn’t assign text or surface colors. The demos pair
+`CanvasText`/`Canvas` for reading, `ButtonText`/`ButtonFace` for headers, and
+`FieldText`/`Field` for code and the event log. Translucent control and field
+surfaces have an explicit `Canvas` backing. Supporting footer text uses an 80%
+foreground mix on `Canvas`, with a full-strength fallback in forced colors and
+increased contrast. Controls and data cells aren’t faded.
 
 ## Accessibility Features
 
@@ -327,17 +441,34 @@ The component is built with accessibility as a priority:
    - Relies on native table and `aria-sort` support rather than adding a live region, avoiding duplicate announcements in browser and assistive-technology combinations that already report sort changes
 
 3. **Progressive Enhancement**:
-   - Automatically creates accessible buttons if none are provided
-   - Works with existing links or buttons in markup
+   - Leaves a native readable table before enhancement or when loading fails
+   - Replaces header contents with native buttons; use plain text headers
 
 4. **Visual Indicators**:
    - CSS classes indicate active column and sort direction
-   - Focus indicators for keyboard navigation
-   - Column highlighting via `<col>` elements
+   - Demos preserve native keyboard focus indicators
+   - Arrows and `aria-sort` convey direction independently of color
+   - Group names and separators supplement decorative edge accents
+
+Authors still need meaningful captions and column names, translated
+descriptions, readable color pairs, and keyboard access to overflowing tables.
+Sorting keeps the activated header button focused and moves the original data
+rows. It doesn’t move focus to a newly sorted row or add a live announcement.
+Test the complete authored table with your users’ browsers and assistive
+technologies; automated checks don’t establish conformance.
+
+Disconnecting cancels pending initialization and removes header-button
+listeners. It doesn’t restore the original headers or body structure.
+Reconnection initializes again; don’t rely on it to preserve enhanced header
+contents or apply new labels safely.
 
 ## Column Highlighting
 
 The component automatically injects `<colgroup>` and `<col>` elements if they don't exist, allowing you to style entire columns. The currently sorted column receives a `.sorted` class on its corresponding `<col>` element.
+
+Opaque cell, row, and body backgrounds paint above column backgrounds. For
+striped or grouped tables, pair foreground/background colors on the actual
+sorted cells, as shown above, rather than relying on `col.sorted` alone.
 
 ## Sorting Behavior
 
@@ -352,11 +483,13 @@ The component automatically detects numeric values and sorts them numerically ra
 ## Browser Support
 
 This component uses modern web standards:
+
 - Custom Elements v1
 - ES Modules
 - ES6+ JavaScript features
 
 **Supported Browsers:**
+
 - Chrome/Edge 88+
 - Firefox 87+
 - Safari 14+
@@ -378,15 +511,32 @@ npm run test:ui
 # Run tests with coverage
 npm run test:coverage
 
+# Install browser engines, then run browser regressions
+npx playwright install chromium firefox webkit
+npm run test:browser
+
 # Lint code
 npm run lint
 
 # Format code
 npm run format
 
-# View demo locally
-open demo/index.html
+# Serve the demos locally
+node scripts/serve.js
+# Open http://127.0.0.1:4181/demo/index.html
 ```
+
+Browser tests cover the study’s 19 distinct palettes, native light/dark colors,
+painted cell and control contrast, indicator hooks, keyboard sorting and
+scrolling, localized descriptions, reflow, and no-JavaScript/module-failure
+tables. CDN requests are intercepted with local source for regression tests.
+The isolated version-helper test checks both displayed and executed ESM pins
+without changing the real package version.
+
+Palette substitution and Chromium forced-color emulation aren’t substitutes
+for real Windows Contrast themes, Firefox custom colors, platform zoom, or
+manual assistive-technology testing. The suite records the known Linux
+WebKit native dark control-pair failure separately from the study palettes.
 
 ## License
 

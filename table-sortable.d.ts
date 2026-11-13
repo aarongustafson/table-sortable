@@ -14,7 +14,6 @@ export declare class TableSortableElement extends HTMLElement {
 	labelDescending: string | null;
 }
 
-
 declare global {
 	interface HTMLElementTagNameMap {
 		'table-sortable': TableSortableElement;

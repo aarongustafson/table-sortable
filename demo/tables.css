@@ -1,0 +1,190 @@
+table-sortable:not([hidden]) {
+	display: block;
+	max-inline-size: 100%;
+	overflow-x: auto;
+}
+
+table {
+	inline-size: 100%;
+	min-inline-size: 28rem;
+	border-collapse: collapse;
+	margin-block: 0.5rem;
+	background: Canvas;
+	color: CanvasText;
+}
+
+caption {
+	text-align: start;
+	font-weight: bold;
+	background: Canvas;
+	color: CanvasText;
+	padding-block-end: 0.5rem;
+}
+
+th,
+td {
+	padding: 0.5rem;
+	text-align: start;
+	border: 1px solid currentColor;
+}
+
+th {
+	background-color: Canvas;
+	background-image: linear-gradient(ButtonFace, ButtonFace);
+	color: ButtonText;
+}
+
+td {
+	background: Canvas;
+	color: CanvasText;
+}
+
+tbody tr:nth-child(even) > td,
+.grouped-table tbody tr[data-demo-stripe='even'] > td {
+	background: Canvas;
+	background: color-mix(in srgb, Canvas 95%, CanvasText);
+}
+
+.grouped-table tbody tr[data-demo-stripe='odd'] > td {
+	background: Canvas;
+}
+
+thead th {
+	padding: 0;
+	/* A specified cell height lets the button stretch to the row's used height. */
+	block-size: 1px;
+}
+
+thead th button {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	inline-size: 100%;
+	block-size: 100%;
+	background: transparent;
+	color: inherit;
+	border: 0;
+	border-radius: 0;
+	padding: 0.5rem;
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+}
+
+thead th button:hover {
+	background: transparent;
+	background: color-mix(in srgb, currentColor 5%, transparent);
+}
+
+table-sortable thead th button::after {
+	content: '↕' / '';
+	flex: 0 0 1.25em;
+	text-align: end;
+}
+
+thead th[aria-sort='ascending'],
+thead th[aria-sort='descending'] {
+	background: CanvasText;
+	color: Canvas;
+}
+
+table:has(col:nth-child(1).sorted) tbody td:nth-child(1),
+table:has(col:nth-child(2).sorted) tbody td:nth-child(2),
+table:has(col:nth-child(3).sorted) tbody td:nth-child(3),
+table:has(col:nth-child(4).sorted) tbody td:nth-child(4) {
+	background: CanvasText;
+	color: Canvas;
+}
+
+.grouped-table tbody {
+	--group-accent: rebeccapurple;
+}
+
+.grouped-table tbody:nth-of-type(even) {
+	--group-accent: seagreen;
+}
+
+.grouped-table tbody td:first-child {
+	border-inline-start: 0.25rem solid var(--group-accent);
+}
+
+.grouped-table tbody + tbody tr:first-child > td {
+	border-block-start-width: 3px;
+}
+
+.grouped-indicator {
+	font-size: 0.85rem;
+	font-style: italic;
+}
+
+#event-log {
+	margin-block-start: 1rem;
+	padding: 1rem;
+	background-color: Canvas;
+	background-image: linear-gradient(Field, Field);
+	color: FieldText;
+	border-radius: 0.25rem;
+}
+
+#event-messages {
+	margin-block-start: 0.5rem;
+	font-family: monospace;
+	font-size: 0.9rem;
+}
+
+@supports (mask-image: url('')) {
+	table-sortable.svg-sort-indicators thead th button::after {
+		content: '' / '';
+		inline-size: 1.25rem;
+		block-size: 1.75rem;
+		background: currentColor;
+		mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 24'%3E%3Cpath d='M3 9 8 4l5 5M3 15l5 5 5-5' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E");
+		mask-size: contain;
+		mask-repeat: no-repeat;
+		mask-position: center;
+	}
+
+	table-sortable.svg-sort-indicators
+		thead
+		th[aria-sort='ascending']
+		button::after {
+		mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 24'%3E%3Cpath d='M2 10 8 3l6 7Z' fill='black'/%3E%3Cpath d='m3 15 5 5 5-5' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E");
+	}
+
+	table-sortable.svg-sort-indicators
+		thead
+		th[aria-sort='descending']
+		button::after {
+		mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 24'%3E%3Cpath d='M3 9 8 4l5 5' fill='none' stroke='black' stroke-width='1.5'/%3E%3Cpath d='m2 14 6 7 6-7Z' fill='black'/%3E%3C/svg%3E");
+	}
+}
+
+@media (forced-colors: active) {
+	table-sortable.svg-sort-indicators thead th button::after {
+		mask-image: none;
+		background: transparent;
+		block-size: auto;
+		content: '△\A▽' / '';
+		line-height: 0.75;
+		white-space: pre;
+	}
+
+	table-sortable.svg-sort-indicators
+		thead
+		th[aria-sort='ascending']
+		button::after {
+		content: '▲\A▽' / '';
+	}
+
+	table-sortable.svg-sort-indicators
+		thead
+		th[aria-sort='descending']
+		button::after {
+		content: '△\A▼' / '';
+	}
+
+	thead th button:hover {
+		background: transparent;
+	}
+}

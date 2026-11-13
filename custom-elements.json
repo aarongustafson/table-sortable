@@ -1,6 +1,6 @@
 {
 	"schemaVersion": "1.0.0",
-	"readme": "",
+	"readme": "README.md",
 	"modules": [
 		{
 			"kind": "javascript-module",
@@ -8,15 +8,34 @@
 			"declarations": [
 				{
 					"kind": "class",
-					"description": "A web component to enable users to sort table data by clicking on column headers. Built with accessibility in mind, featuring keyboard navigation, native sort semantics, described controls, and light DOM manipulation.\n\nBased on the original jquery.easy-sortable-tables.js by Aaron Gustafson.",
+					"description": "Enhances the first light-DOM table with header buttons, localized descriptions, aria-sort, numeric/text keys, and row grouping. Configure labels before initialization. Header contents are replaced with their text; sorting moves original rows into new bodies and preserves effective group keys, not arbitrary tbody attributes. Disconnecting cancels pending initialization and removes button listeners. Shared indicator and hidden-description styles target the default table-sortable tag.",
 					"name": "TableSortableElement",
-					"slots": [
+					"members": [
 						{
-							"description": "The table element to make sortable. Should contain a table with thead (containing th elements) and tbody elements. The component will automatically inject buttons into th elements if none are present (progressive enhancement).",
-							"name": ""
+							"kind": "field",
+							"name": "labelSortable",
+							"type": { "text": "string | null" },
+							"attribute": "label-sortable",
+							"reflects": true,
+							"description": "Reflects label-sortable. Missing or empty values use the English default. Configure before initialization; later reflection does not update rendered descriptions."
+						},
+						{
+							"kind": "field",
+							"name": "labelAscending",
+							"type": { "text": "string | null" },
+							"attribute": "label-ascending",
+							"reflects": true,
+							"description": "Reflects label-ascending. Missing or empty values use the English default. Configure before initialization."
+						},
+						{
+							"kind": "field",
+							"name": "labelDescending",
+							"type": { "text": "string | null" },
+							"attribute": "label-descending",
+							"reflects": true,
+							"description": "Reflects label-descending. Missing or empty values use the English default. Configure before initialization."
 						}
 					],
-					"members": [],
 					"events": [
 						{
 							"name": "table-sortable:sort",
@@ -38,6 +57,7 @@
 								"text": "string"
 							},
 							"description": "Accessible description for an unsorted column button (default: 'Click to sort ascending'). Each button references the shared description with aria-describedby.",
+							"fieldName": "labelSortable",
 							"default": "\"Click to sort ascending\""
 						},
 						{
@@ -46,6 +66,7 @@
 								"text": "string"
 							},
 							"description": "Accessible description for the ascending sort state (default: 'sorted ascending. Click to sort descending').",
+							"fieldName": "labelAscending",
 							"default": "\"sorted ascending. Click to sort descending\""
 						},
 						{
@@ -54,31 +75,8 @@
 								"text": "string"
 							},
 							"description": "Accessible description for the descending sort state (default: 'sorted descending. Click to sort ascending').",
+							"fieldName": "labelDescending",
 							"default": "\"sorted descending. Click to sort ascending\""
-						},
-						{
-							"name": "data-sort-value",
-							"type": {
-								"text": "string | number"
-							},
-							"description": "Custom sort value for a table cell (td). When present, this value is used for sorting instead of the cell's text content. Useful for sorting by hidden values (e.g., timestamps, product codes) or numeric values with formatting.",
-							"fieldName": "data-sort-value"
-						},
-						{
-							"name": "data-sort-as",
-							"type": {
-								"text": "boolean"
-							},
-							"description": "Marks an element within a table cell as containing the sort value. The text content of this element will be used for sorting. Typically used on a hidden span element to sort by last name while displaying 'First Last'.",
-							"fieldName": "data-sort-as"
-						},
-						{
-							"name": "data-table-sort-group",
-							"type": {
-								"text": "string"
-							},
-							"description": "Groups table rows together during sorting. Apply the same value to each tr in a logical group (e.g., a department or category), or apply it to a tbody as a default for all contained rows. A value directly on tr overrides the inherited tbody value. Rows with the same effective value are collected into a new tbody.",
-							"fieldName": "data-table-sort-group"
 						}
 					],
 					"cssProperties": [
@@ -89,6 +87,14 @@
 						{
 							"name": "--table-sortable-indicator-desc",
 							"description": "Descending sort indicator character or symbol (default: ↓)"
+						},
+						{
+							"name": "--sort-indicator-asc",
+							"description": "Legacy ascending fallback when --table-sortable-indicator-asc is unset (default: ↑)"
+						},
+						{
+							"name": "--sort-indicator-desc",
+							"description": "Legacy descending fallback when --table-sortable-indicator-desc is unset (default: ↓)"
 						}
 					],
 					"cssParts": [],
@@ -103,6 +109,58 @@
 				{
 					"kind": "js",
 					"name": "TableSortableElement",
+					"declaration": {
+						"name": "TableSortableElement",
+						"module": "table-sortable.js"
+					}
+				}
+			]
+		},
+		{
+			"kind": "javascript-module",
+			"path": "index.js",
+			"declarations": [],
+			"exports": [
+				{
+					"kind": "js",
+					"name": "TableSortableElement",
+					"declaration": {
+						"name": "TableSortableElement",
+						"module": "table-sortable.js"
+					}
+				}
+			]
+		},
+		{
+			"kind": "javascript-module",
+			"path": "define.js",
+			"declarations": [
+				{
+					"kind": "function",
+					"name": "defineTableSortable",
+					"description": "Importing this module automatically calls the helper with the default tag. Returns false without a usable browser registry; otherwise defines the requested tag if absent and returns true. Repeated calls for the same tag are safe. Use the class-only import to control registration timing.",
+					"parameters": [
+						{
+							"name": "tagName",
+							"type": { "text": "string" },
+							"default": "'table-sortable'"
+						}
+					],
+					"return": { "type": { "text": "boolean" } }
+				}
+			],
+			"exports": [
+				{
+					"kind": "js",
+					"name": "defineTableSortable",
+					"declaration": {
+						"name": "defineTableSortable",
+						"module": "define.js"
+					}
+				},
+				{
+					"kind": "custom-element-definition",
+					"name": "table-sortable",
 					"declaration": {
 						"name": "TableSortableElement",
 						"module": "table-sortable.js"
