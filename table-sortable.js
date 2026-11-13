@@ -8,14 +8,14 @@
  *
  * @fires table-sortable:sort - Fired when a column is sorted. Detail: { column: number, direction: 'asc'|'desc', header: HTMLElement }
  *
- * @slot - Default slot for the table element
- *
  * @attr {string} label-sortable - Custom label for sortable columns (default: "Click to sort ascending")
  * @attr {string} label-ascending - Custom label for ascending sort (default: "sorted ascending. Click to sort descending")
  * @attr {string} label-descending - Custom label for descending sort (default: "sorted descending. Click to sort ascending")
  *
  * @cssprop --table-sortable-indicator-asc - Ascending sort indicator (default: ↑)
  * @cssprop --table-sortable-indicator-desc - Descending sort indicator (default: ↓)
+ * @cssprop --sort-indicator-asc - Legacy ascending indicator fallback
+ * @cssprop --sort-indicator-desc - Legacy descending indicator fallback
  */
 let nextDescriptionId = 0;
 
@@ -36,10 +36,10 @@ export class TableSortableElement extends HTMLElement {
 		style.id = 'table-sortable-styles';
 		style.textContent = `
 			table-sortable thead th[aria-sort="ascending"] button::after {
-				content: var(--sort-indicator-asc, '↑') / '';
+				content: var(--table-sortable-indicator-asc, var(--sort-indicator-asc, '↑')) / '';
 			}
 			table-sortable thead th[aria-sort="descending"] button::after {
-				content: var(--sort-indicator-desc, '↓') / '';
+				content: var(--table-sortable-indicator-desc, var(--sort-indicator-desc, '↓')) / '';
 			}
 			table-sortable .table-sortable-description {
 				position: absolute;

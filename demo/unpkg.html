@@ -5,66 +5,93 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>table-sortable via unpkg</title>
 		<link rel="stylesheet" href="./styles.css" />
-		<style>
-			table {
-				border-collapse: collapse;
-				width: 100%;
-				max-width: 680px;
-				margin: 1rem 0;
-			}
-
-			th,
-			td {
-				border: 1px solid #ddd;
-				padding: 0.75rem;
-				text-align: left;
-			}
-
-			th {
-				background-color: #f4f4f4;
-				color: #000;
-			}
-
-			table-sortable th button::after {
-				margin-inline-start: 0.5em;
-			}
-		</style>
+		<link rel="stylesheet" href="./tables.css" />
 	</head>
 	<body>
-		<h1>unpkg CDN sanity check</h1>
-		<p>
-			This page loads the guarded definition helper from
-			<code>unpkg</code> and registers the element when supported.
-		</p>
+		<header>
+			<h1>table-sortable via unpkg</h1>
+			<p>
+				This page loads the guarded definition helper from
+				<code>unpkg</code>. Importing it registers the element when
+				supported; the explicit helper call is safe to repeat. See the
+				<a
+					href="https://github.com/aarongustafson/table-sortable/blob/main/README.md"
+					>README</a
+				>
+				for the API.
+			</p>
+		</header>
+		<main>
+			<section class="demo-section">
+				<h2>Automatic registration</h2>
+				<p>
+					The captioned table remains readable if JavaScript or the
+					CDN fails; sort buttons appear only after enhancement. At
+					narrow widths, focus the table region and use arrow keys to
+					scroll.
+				</p>
+				<div class="code-demo-pair">
+					<pre><code>&lt;script type="module"&gt;
+  import { defineTableSortable } from 'https://unpkg.com/@aarongustafson/table-sortable@latest/define.js?module';
+  defineTableSortable();
+&lt;/script&gt;
 
-		<table-sortable>
-			<table>
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Age</th>
-						<th>City</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>Charlie</td>
-						<td>35</td>
-						<td>New York</td>
-					</tr>
-					<tr>
-						<td>Alice</td>
-						<td>28</td>
-						<td>Boston</td>
-					</tr>
-					<tr>
-						<td>Bob</td>
-						<td>42</td>
-						<td>Chicago</td>
-					</tr>
-				</tbody>
-			</table>
-		</table-sortable>
+&lt;table-sortable tabindex="0" role="region" aria-label="People table"&gt;
+  &lt;table&gt;
+    &lt;caption&gt;People and cities&lt;/caption&gt;
+    &lt;!-- Plain headers and data rows --&gt;
+  &lt;/table&gt;
+&lt;/table-sortable&gt;</code></pre>
+					<div class="demo">
+						<table-sortable
+							tabindex="0"
+							role="region"
+							aria-label="People table"
+						>
+							<table>
+								<caption>
+									People and cities
+								</caption>
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Age</th>
+										<th>City</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>Charlie</td>
+										<td>35</td>
+										<td>New York</td>
+									</tr>
+									<tr>
+										<td>Alice</td>
+										<td>28</td>
+										<td>Boston</td>
+									</tr>
+									<tr>
+										<td>Bob</td>
+										<td>42</td>
+										<td>Chicago</td>
+									</tr>
+								</tbody>
+							</table>
+						</table-sortable>
+					</div>
+				</div>
+			</section>
+		</main>
+		<footer>
+			<p>
+				Made with ❤️ by
+				<a href="https://github.com/aarongustafson">Aaron Gustafson</a>.
+				View the source on
+				<a href="https://github.com/aarongustafson/table-sortable"
+					>GitHub</a
+				>.
+			</p>
+		</footer>
 
 		<script type="module">
 			import { defineTableSortable } from 'https://unpkg.com/@aarongustafson/table-sortable@latest/define.js?module';
