@@ -31,18 +31,18 @@
 				</p>
 				<div class="code-demo-pair">
 					<pre><code>&lt;script type="module"&gt;
-  import { TableSortableElement } from 'https://esm.sh/@aarongustafson/table-sortable@2.1.4/table-sortable.js?bundle&amp;target=es2022';
+  <mark>import { TableSortableElement } from 'https://esm.sh/@aarongustafson/table-sortable@2.1.4/table-sortable.js?bundle&amp;target=es2022';</mark>
   if (!customElements.get('table-sortable')) {
-    customElements.define('table-sortable', TableSortableElement);
+    <mark>customElements.define('table-sortable', TableSortableElement);</mark>
   }
 &lt;/script&gt;
 
-&lt;table-sortable tabindex="0" role="region" aria-label="People table"&gt;
+<mark>&lt;table-sortable tabindex="0" role="region" aria-label="People table"&gt;</mark>
   &lt;table&gt;
     &lt;caption&gt;People and cities&lt;/caption&gt;
     &lt;!-- Plain headers and data rows --&gt;
   &lt;/table&gt;
-&lt;/table-sortable&gt;</code></pre>
+<mark>&lt;/table-sortable&gt;</mark></code></pre>
 					<div class="demo">
 						<table-sortable
 							tabindex="0"

@@ -45,8 +45,8 @@
 				<div class="demo-section">
 					<h3>Auto-Enhanced Table</h3>
 					<div class="code-demo-pair">
-						<pre><code>&lt;table-sortable class="svg-sort-indicators"
-  tabindex="0" role="region" aria-label="Employee table"&gt;
+						<pre><code><mark>&lt;table-sortable class="svg-sort-indicators"
+  tabindex="0" role="region" aria-label="Employee table"&gt;</mark>
   &lt;table&gt;
     &lt;caption&gt;Employee directory&lt;/caption&gt;
     &lt;thead&gt;
@@ -65,7 +65,7 @@
       &lt;!-- more rows --&gt;
     &lt;/tbody&gt;
   &lt;/table&gt;
-&lt;/table-sortable&gt;</code></pre>
+<mark>&lt;/table-sortable&gt;</mark></code></pre>
 						<div class="demo">
 							<table-sortable
 								class="svg-sort-indicators"
@@ -234,7 +234,7 @@
 					<h3>Sorting by Last Name</h3>
 					<div class="code-demo-pair">
 						<pre><code>&lt;td&gt;
-  John <mark>&lt;span data-sort-as&gt;Smith&lt;/span&gt;</mark>
+  John &lt;span <mark>data-sort-as</mark>&gt;Smith&lt;/span&gt;
 &lt;/td&gt;</code></pre>
 						<div class="demo">
 							<table-sortable
@@ -471,11 +471,11 @@
 				<div class="demo-section">
 					<h3>French Localization</h3>
 					<div class="code-demo-pair">
-						<pre><code>&lt;table-sortable
+						<pre><code><mark>&lt;table-sortable
   lang="fr" tabindex="0" role="region" aria-label="Tableau du personnel"
-  <mark>label-sortable="Cliquer pour trier par ordre croissant"</mark>
-  <mark>label-ascending="trié croissant. Cliquer pour trier décroissant"</mark>
-  <mark>label-descending="trié décroissant. Cliquer pour trier croissant"</mark>&gt;
+  label-sortable="Cliquer pour trier par ordre croissant"
+  label-ascending="trié croissant. Cliquer pour trier décroissant"
+  label-descending="trié décroissant. Cliquer pour trier croissant"&gt;</mark>
   &lt;table&gt;
     &lt;thead&gt;
       &lt;tr&gt;
@@ -485,7 +485,7 @@
     &lt;/thead&gt;
     &lt;!-- ... --&gt;
   &lt;/table&gt;
-&lt;/table-sortable&gt;</code></pre>
+<mark>&lt;/table-sortable&gt;</mark></code></pre>
 						<div class="demo">
 							<table-sortable
 								lang="fr"
@@ -568,8 +568,8 @@
 				<div class="demo-section">
 					<h3>Sort Event Listener</h3>
 					<div class="code-demo-pair">
-						<pre><code>element.addEventListener('table-sortable:sort', (event) => {
-  const { column, direction, header } = event.detail;
+						<pre><code>element.addEventListener(<mark>'table-sortable:sort'</mark>, (event) => {
+  const { column, direction, header } = <mark>event.detail</mark>;
   const columnName = header.querySelector('button').textContent.trim();
   console.log(`Sorted by ${columnName} (column ${column}, ${direction})`);
 });</code></pre>
