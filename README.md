@@ -1,6 +1,10 @@
 # table-sortable Web Component
 
-[![npm version](https://img.shields.io/npm/v/@aarongustafson/table-sortable.svg)](https://www.npmjs.com/package/@aarongustafson/table-sortable) [![Build Status](https://img.shields.io/github/actions/workflow/status/aarongustafson/table-sortable/ci.yml?branch=main)](https://github.com/aarongustafson/table-sortable/actions)
+[![npm version](https://img.shields.io/npm/v/@aarongustafson/table-sortable.svg)](https://www.npmjs.com/package/@aarongustafson/table-sortable)
+[![CI status](https://img.shields.io/github/actions/workflow/status/aarongustafson/table-sortable/ci.yml?branch=main&label=CI)](https://github.com/aarongustafson/table-sortable/actions/workflows/ci.yml)
+[![Minified + gzipped size](https://img.shields.io/bundlejs/size/@aarongustafson/table-sortable?format=minzip&label=min%2Bgzip)](https://bundlejs.com/?q=@aarongustafson/table-sortable)
+[![License](https://img.shields.io/npm/l/@aarongustafson/table-sortable)](https://github.com/aarongustafson/table-sortable/blob/main/LICENSE)
+[![Type definitions](https://img.shields.io/npm/types/@aarongustafson/table-sortable)](https://github.com/aarongustafson/table-sortable/blob/main/table-sortable.d.ts)
 
 A web component to enable users to sort table data by clicking on column headers. Built with accessibility in mind, featuring keyboard navigation, native sort semantics, and light DOM manipulation.
 
