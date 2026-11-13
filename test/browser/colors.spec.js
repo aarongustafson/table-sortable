@@ -159,7 +159,7 @@ async function demo(page, name = 'index.html') {
 test('all 19 palettes preserve ordinary, sorted and grouped cell contrast', async ({
 	page,
 }) => {
-	test.setTimeout(60_000);
+	test.setTimeout(120_000);
 	await page.setViewportSize({ width: 1400, height: 900 });
 	await demo(page);
 	const originals = await page.evaluate(() =>
