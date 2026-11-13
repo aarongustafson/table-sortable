@@ -350,58 +350,62 @@ test('SVG caret masks follow the button foreground in both directions', async ({
 	}
 });
 
-test('flat sort buttons cover the full header cell, including wrapped rows and edge clicks', async ({
-	page,
-}) => {
-	await page.setViewportSize({ width: 320, height: 900 });
-	await demo(page);
-	const host = page.locator('table-sortable').first();
-	const buttons = host.locator('thead button');
-	const initialHeight = await host
-		.locator('thead')
-		.evaluate((head) => head.getBoundingClientRect().height);
-	await buttons.last().evaluate((button) => {
-		button.textContent = 'A longer occupation header';
-	});
-	expect(
-		await host
-			.locator('thead')
-			.evaluate((head) => head.getBoundingClientRect().height),
-	).toBeGreaterThan(initialHeight);
-	for (const button of await buttons.all()) {
-		await expect(button).toHaveCSS('border-top-width', '0px');
-		const geometry = await button.evaluate((button) => {
-			const cell = button.closest('th');
-			const a = button.getBoundingClientRect();
-			const b = cell.getBoundingClientRect();
-			const style = getComputedStyle(cell);
-			return {
-				padding: style.paddingTop,
-				widthGap: b.width - a.width,
-				heightGap: b.height - a.height,
-			};
+for (const fontSize of [100, 200]) {
+	test(`${fontSize}%: flat sort buttons cover the full header cell, including wrapped rows and edge clicks`, async ({
+		page,
+	}) => {
+		await page.setViewportSize({ width: 320, height: 900 });
+		await demo(page);
+		await page.addStyleTag({
+			content: `:root { font-size: ${fontSize}%; }`,
 		});
-		expect(geometry.padding).toBe('0px');
-		expect(geometry.widthGap).toBeLessThanOrEqual(2);
-		expect(geometry.heightGap).toBeLessThanOrEqual(2);
-		await button.scrollIntoViewIfNeeded();
-		const box = await button.boundingBox();
-		await page.mouse.click(box.x + 2, box.y + 2);
-		await expect(button.locator('..')).toHaveAttribute(
-			'aria-sort',
-			'ascending',
-		);
-		const next = await button.boundingBox();
-		await page.mouse.click(
-			next.x + next.width - 2,
-			next.y + next.height - 2,
-		);
-		await expect(button.locator('..')).toHaveAttribute(
-			'aria-sort',
-			'descending',
-		);
-	}
-});
+		const host = page.locator('table-sortable').first();
+		const buttons = host.locator('thead button');
+		const initialHeight = await host
+			.locator('thead')
+			.evaluate((head) => head.getBoundingClientRect().height);
+		await buttons.last().evaluate((button) => {
+			button.textContent = 'A longer occupation header';
+		});
+		expect(
+			await host
+				.locator('thead')
+				.evaluate((head) => head.getBoundingClientRect().height),
+		).toBeGreaterThan(initialHeight);
+		for (const button of await buttons.all()) {
+			await expect(button).toHaveCSS('border-top-width', '0px');
+			const geometry = await button.evaluate((button) => {
+				const cell = button.closest('th');
+				const a = button.getBoundingClientRect();
+				const b = cell.getBoundingClientRect();
+				const style = getComputedStyle(cell);
+				return {
+					padding: style.paddingTop,
+					widthGap: b.width - a.width,
+					heightGap: b.height - a.height,
+					contentOverflow: button.scrollHeight - button.clientHeight,
+				};
+			});
+			expect(geometry.padding).toBe('0px');
+			expect(geometry.widthGap).toBeLessThanOrEqual(2);
+			expect(geometry.heightGap).toBeLessThanOrEqual(2);
+			expect(geometry.contentOverflow).toBeLessThanOrEqual(1);
+			await button.click({ position: { x: 2, y: 2 } });
+			await expect(button.locator('..')).toHaveAttribute(
+				'aria-sort',
+				'ascending',
+			);
+			const next = await button.boundingBox();
+			await button.click({
+				position: { x: next.width - 2, y: next.height - 2 },
+			});
+			await expect(button.locator('..')).toHaveAttribute(
+				'aria-sort',
+				'descending',
+			);
+		}
+	});
+}
 
 test('native keyboard sorting retains names, focus, row nodes and correct numeric order', async ({
 	page,

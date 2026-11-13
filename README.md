@@ -358,6 +358,7 @@ table-sortable:not([hidden]) {
 
 table {
   min-inline-size: 28rem;
+  block-size: 1px;
   background: Canvas;
   color: CanvasText;
 }
@@ -375,7 +376,7 @@ th {
 
 thead th {
   padding: 0;
-  block-size: 1px;
+  block-size: 100%;
 }
 
 thead th button {
@@ -417,8 +418,9 @@ selectors, neutral striping, group separators, and SVG masks that follow
 colors use outlined/filled Unicode caret pairs instead.
 
 The header button fills the cell without an inset border. The small specified
-cell height lets the button’s percentage height follow the row’s used height;
-wrapped labels still expand the row. The browser’s focus indicator is retained.
+table height lets percentage-sized headers and buttons follow the row’s used
+height. Table height is a minimum, so wrapped labels and data still expand
+their rows. The browser’s focus indicator is retained.
 
 The base component doesn’t assign text or surface colors. The demos pair
 `CanvasText`/`Canvas` for reading, `ButtonText`/`ButtonFace` for headers, and

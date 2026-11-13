@@ -7,6 +7,8 @@ table-sortable:not([hidden]) {
 table {
 	inline-size: 100%;
 	min-inline-size: 28rem;
+	/* Table height is a minimum; content still expands every row. */
+	block-size: 1px;
 	border-collapse: collapse;
 	margin-block: 0.5rem;
 	background: Canvas;
@@ -51,8 +53,7 @@ tbody tr:nth-child(even) > td,
 
 thead th {
 	padding: 0;
-	/* A specified cell height lets the button stretch to the row's used height. */
-	block-size: 1px;
+	block-size: 100%;
 }
 
 thead th button {
