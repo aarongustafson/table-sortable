@@ -32,7 +32,7 @@
 				<div class="code-demo-pair">
 					<pre><code>&lt;script type="module"&gt;
   <mark>import { TableSortableElement } from 'https://esm.sh/@aarongustafson/table-sortable@2.1.4/table-sortable.js?bundle&amp;target=es2022';</mark>
-  if (!customElements.get('table-sortable')) {
+  if (!<mark>customElements.get('table-sortable')</mark>) {
     <mark>customElements.define('table-sortable', TableSortableElement);</mark>
   }
 &lt;/script&gt;
