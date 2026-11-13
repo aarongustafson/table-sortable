@@ -162,7 +162,7 @@ table:has(col:nth-child(4).sorted) tbody td:nth-child(4) {
 }
 
 @media (forced-colors: active) {
-	table-sortable.svg-sort-indicators thead th button::after {
+	table-sortable.svg-sort-indicators thead th[aria-sort] button::after {
 		mask-image: none;
 		background: transparent;
 		block-size: auto;

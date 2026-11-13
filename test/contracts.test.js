@@ -6,7 +6,6 @@ const read = (path) => readFile(new URL(path, import.meta.url), 'utf8');
 
 it('describes the real host properties, indicator hooks and registration exports', async () => {
 	const manifest = JSON.parse(await read('../custom-elements.json'));
-	expect(manifest.readme).toBe('README.md');
 	const component = manifest.modules.find(
 		(entry) => entry.path === 'table-sortable.js',
 	).declarations[0];
@@ -41,6 +40,11 @@ it('describes the real host properties, indicator hooks and registration exports
 		'defineTableSortable',
 	);
 	expect(await read('../define.d.ts')).toContain('defineTableSortable');
+});
+
+it('does not replace package documentation with a README filename override', async () => {
+	const manifest = JSON.parse(await read('../custom-elements.json'));
+	expect(manifest).not.toHaveProperty('readme');
 });
 
 it('renders a complete three-column CSS property reference', async () => {

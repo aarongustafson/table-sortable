@@ -38,11 +38,11 @@ const palettes = [
 
 function substitute(css, palette) {
 	const colors = Object.fromEntries(
-		tokens.map((token, index) => [token, palette[index]]),
+		tokens.map((token, index) => [token.toLowerCase(), palette[index]]),
 	);
 	return css.replace(
-		/\b(CanvasText|Canvas|ButtonFace|ButtonText|FieldText|Field)\b/g,
-		(token) => colors[token],
+		/\b(CanvasText|Canvas|ButtonFace|ButtonText|FieldText|Field)\b/gi,
+		(token) => colors[token.toLowerCase()],
 	);
 }
 
@@ -155,6 +155,55 @@ async function demo(page, name = 'index.html') {
 		page.locator('table-sortable').first().getByRole('button').first(),
 	).toBeVisible();
 }
+
+test('palette substitution handles mixed-case and normalized CSSOM system colors', async ({
+	page,
+}) => {
+	const authored =
+		'#palette-probe { background-color: cAnVaS; color: canvastext; border-color: BUTTONFACE; outline-color: buttontext; text-decoration-color: field; column-rule-color: FieldText; }';
+	const palette = [
+		'#010203',
+		'#112233',
+		'#445566',
+		'#778899',
+		'#aabbcc',
+		'#ddeeff',
+	];
+	await page.setContent(
+		`<style>${authored}</style><div id="palette-probe">Palette</div>`,
+	);
+	const style = page.locator('style');
+	const serialized = await style.evaluate(
+		(style) => style.sheet.cssRules[0].cssText,
+	);
+	for (const css of [authored, serialized.toLowerCase()]) {
+		const replaced = substitute(css, palette);
+		for (const color of palette) expect(replaced).toContain(color);
+		await style.evaluate((style, css) => {
+			style.textContent = css;
+		}, replaced);
+		expect(
+			await page.locator('#palette-probe').evaluate((probe) => {
+				const style = getComputedStyle(probe);
+				return [
+					'backgroundColor',
+					'color',
+					'borderTopColor',
+					'outlineColor',
+					'textDecorationColor',
+					'columnRuleColor',
+				].map((property) => style[property]);
+			}),
+		).toEqual([
+			'rgb(1, 2, 3)',
+			'rgb(17, 34, 51)',
+			'rgb(68, 85, 102)',
+			'rgb(119, 136, 153)',
+			'rgb(170, 187, 204)',
+			'rgb(221, 238, 255)',
+		]);
+	}
+});
 
 test('all 19 palettes preserve ordinary, sorted and grouped cell contrast', async ({
 	page,
@@ -532,19 +581,25 @@ test('forced colors retain shape indicators and native focus', async ({
 	await page.emulateMedia({ forcedColors: 'active' });
 	await demo(page);
 	const host = page.locator('table-sortable').first();
+	await expect(host).toHaveClass(/svg-sort-indicators/);
 	const button = host.getByRole('button', { name: 'Name', exact: true });
 	await button.focus();
-	await page.keyboard.press('Enter');
-	const active = await button.evaluate(
-		(button) => getComputedStyle(button, '::after').content,
-	);
-	expect(active).toContain('▲');
-	await page.keyboard.press('Space');
-	expect(
-		await button.evaluate(
-			(button) => getComputedStyle(button, '::after').content,
-		),
-	).toContain('▼');
+	for (const [state, upper, lower] of [
+		['none', '△', '▽'],
+		['ascending', '▲', '▽'],
+		['descending', '△', '▼'],
+	]) {
+		await expect(button.locator('..')).toHaveAttribute('aria-sort', state);
+		const pseudo = await button.evaluate((button) => {
+			const style = getComputedStyle(button, '::after');
+			return { content: style.content, mask: style.maskImage };
+		});
+		expect(pseudo.content).toContain(upper);
+		expect(pseudo.content).toContain(lower);
+		expect(pseudo.mask).toBe('none');
+		if (state === 'none') await page.keyboard.press('Enter');
+		else if (state === 'ascending') await page.keyboard.press('Space');
+	}
 	await expect(button).toHaveCSS('forced-color-adjust', 'auto');
 	await expect(button).toHaveCSS('outline-style', 'auto');
 });
