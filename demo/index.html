@@ -5,12 +5,15 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>Sortable Table Web Component Demo</title>
 		<link rel="stylesheet" href="./styles.css" />
+		<link rel="stylesheet" href="./demo-shell.css" />
 		<link rel="stylesheet" href="./tables.css" />
 	</head>
-	<body>
+	<body data-syntax-theme="github">
+		<a class="skip-link" href="#main">Skip to examples</a>
 		<header>
-			<h1>Sortable Table Web Component Demo</h1>
-			<p>
+			<p class="eyebrow">Web component / Examples</p>
+			<h1>&lt;table-sortable&gt;</h1>
+			<p class="lede">
 				A web component to enable users to sort table data by clicking
 				on column headers. Built with accessibility in mind, supporting
 				keyboard navigation and native sort semantics. See the
@@ -20,9 +23,27 @@
 				>
 				for installation and API documentation.
 			</p>
+			<nav aria-label="Component resources">
+				<a
+					href="https://github.com/aarongustafson/table-sortable/blob/main/README.md"
+					>Read the README</a
+				>
+				<a href="https://github.com/aarongustafson/table-sortable"
+					>View on GitHub</a
+				>
+				<a href="./esm.html">esm.sh example</a>
+				<a href="./unpkg.html">unpkg example</a>
+			</nav>
 		</header>
 
-		<main>
+		<main id="main" tabindex="-1">
+			<p
+				id="microlighter-status"
+				class="enhancement-status"
+				role="status"
+				hidden
+			></p>
+
 			<p class="note">
 				If JavaScript is unavailable or the module fails to load, the
 				captioned tables remain readable without sort buttons. On narrow
@@ -45,7 +66,16 @@
 				<div class="demo-section">
 					<h3>Auto-Enhanced Table</h3>
 					<div class="code-demo-pair">
-						<pre><code><mark>&lt;table-sortable class="svg-sort-indicators"
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Auto-Enhanced Table code 1"
+								tabindex="0"
+							><code><mark>&lt;table-sortable class="svg-sort-indicators"
   tabindex="0" role="region" aria-label="Employee table"&gt;</mark>
   &lt;table&gt;
     &lt;caption&gt;Employee directory&lt;/caption&gt;
@@ -66,6 +96,7 @@
     &lt;/tbody&gt;
   &lt;/table&gt;
 <mark>&lt;/table-sortable&gt;</mark></code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<table-sortable
 								class="svg-sort-indicators"
@@ -141,12 +172,22 @@
 				<div class="demo-section">
 					<h3>Product Pricing with Custom Keys</h3>
 					<div class="code-demo-pair">
-						<pre><code>&lt;tr&gt;
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Product Pricing with Custom Keys code 2"
+								tabindex="0"
+							><code>&lt;tr&gt;
   &lt;td <mark>data-sort-value="WIDGET-B"</mark>&gt;Widget B (Premium)&lt;/td&gt;
   &lt;td&gt;WDG-002&lt;/td&gt;
   &lt;td <mark>data-sort-value="50"</mark>&gt;$50.00&lt;/td&gt;
   &lt;td <mark>data-sort-value="15"</mark>&gt;Low (15)&lt;/td&gt;
 &lt;/tr&gt;</code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<table-sortable
 								tabindex="0"
@@ -233,9 +274,19 @@
 				<div class="demo-section">
 					<h3>Sorting by Last Name</h3>
 					<div class="code-demo-pair">
-						<pre><code>&lt;td&gt;
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Sorting by Last Name code 3"
+								tabindex="0"
+							><code>&lt;td&gt;
   John &lt;span <mark>data-sort-as</mark>&gt;Smith&lt;/span&gt;
 &lt;/td&gt;</code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<table-sortable
 								tabindex="0"
@@ -316,7 +367,16 @@
 				<div class="demo-section">
 					<h3>Department-Grouped Employee List</h3>
 					<div class="code-demo-pair">
-						<pre><code>&lt;tbody&gt;
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="Department-Grouped Employee List code 4"
+								tabindex="0"
+							><code>&lt;tbody&gt;
   &lt;tr <mark>data-table-sort-group="engineering"</mark>&gt;
     &lt;td&gt;Charlie Brown&lt;/td&gt;
     &lt;td&gt;85&lt;/td&gt;
@@ -333,6 +393,7 @@
     &lt;td&gt;Active&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/tbody&gt;</code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<table-sortable
 								tabindex="0"
@@ -471,7 +532,16 @@
 				<div class="demo-section">
 					<h3>French Localization</h3>
 					<div class="code-demo-pair">
-						<pre><code><mark>&lt;table-sortable
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="French Localization code 5"
+								tabindex="0"
+							><code><mark>&lt;table-sortable
   lang="fr" tabindex="0" role="region" aria-label="Tableau du personnel"
   label-sortable="Cliquer pour trier par ordre croissant"
   label-ascending="trié croissant. Cliquer pour trier décroissant"
@@ -486,6 +556,7 @@
     &lt;!-- ... --&gt;
   &lt;/table&gt;
 <mark>&lt;/table-sortable&gt;</mark></code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<table-sortable
 								lang="fr"
@@ -568,11 +639,21 @@
 				<div class="demo-section">
 					<h3>Sort Event Listener</h3>
 					<div class="code-demo-pair">
-						<pre><code>element.addEventListener(<mark>'table-sortable:sort'</mark>, (event) => {
+						<micro-lighter
+							class="code-panel"
+							language="javascript"
+							controls="copy"
+							data-label="JavaScript"
+						>
+							<pre
+								aria-label="Sort Event Listener code 6"
+								tabindex="0"
+							><code>element.addEventListener(<mark>'table-sortable:sort'</mark>, (event) => {
   const { column, direction, header } = <mark>event.detail</mark>;
   const columnName = header.querySelector('button').textContent.trim();
   console.log(`Sorted by ${columnName} (column ${column}, ${direction})`);
 });</code></pre>
+						</micro-lighter>
 						<div class="demo">
 							<table-sortable
 								id="event-demo"
@@ -693,5 +774,6 @@
 				}
 			});
 		</script>
+		<script type="module" src="./code-examples.js"></script>
 	</body>
 </html>
