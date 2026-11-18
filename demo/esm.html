@@ -4,13 +4,20 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>table-sortable via esm.sh</title>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/microlighter@2.2.0/dist/themes/github.css"
+		/>
 		<link rel="stylesheet" href="./styles.css" />
+		<link rel="stylesheet" href="./demo-shell.css" />
 		<link rel="stylesheet" href="./tables.css" />
 	</head>
-	<body>
+	<body data-syntax-theme="github">
+		<a class="skip-link" href="#main">Skip to examples</a>
 		<header>
-			<h1>table-sortable via esm.sh</h1>
-			<p>
+			<p class="eyebrow">Web component / esm</p>
+			<h1>&lt;table-sortable&gt;</h1>
+			<p class="lede">
 				This page loads the component class from <code>esm.sh</code> and
 				registers it manually. See the
 				<a
@@ -19,8 +26,26 @@
 				>
 				for the API.
 			</p>
+			<nav aria-label="Component resources">
+				<a
+					href="https://github.com/aarongustafson/table-sortable/blob/main/README.md"
+					>Read the README</a
+				>
+				<a href="https://github.com/aarongustafson/table-sortable"
+					>View on GitHub</a
+				>
+				<a href="./index.html">All examples</a>
+				<a href="./unpkg.html">unpkg example</a>
+			</nav>
 		</header>
-		<main>
+		<main id="main" tabindex="-1">
+			<p
+				id="microlighter-status"
+				class="enhancement-status"
+				role="status"
+				hidden
+			></p>
+
 			<section class="demo-section">
 				<h2>Class-only import and manual registration</h2>
 				<p>
@@ -30,7 +55,16 @@
 					focus the table region and use arrow keys to scroll.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;script type="module"&gt;
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label="Class-only import and manual registration code 1"
+							tabindex="0"
+						><code>&lt;script type="module"&gt;
   <mark>import { TableSortableElement } from 'https://esm.sh/@aarongustafson/table-sortable@2.1.5/table-sortable.js?bundle&amp;target=es2022';</mark>
   if (!<mark>customElements.get('table-sortable')</mark>) {
     <mark>customElements.define('table-sortable', TableSortableElement);</mark>
@@ -43,6 +77,7 @@
     &lt;!-- Plain headers and data rows --&gt;
   &lt;/table&gt;
 <mark>&lt;/table-sortable&gt;</mark></code></pre>
+					</micro-lighter>
 					<div class="demo">
 						<table-sortable
 							tabindex="0"
@@ -101,5 +136,6 @@
 				customElements.define('table-sortable', TableSortableElement);
 			}
 		</script>
+		<script type="module" src="./code-examples.js"></script>
 	</body>
 </html>

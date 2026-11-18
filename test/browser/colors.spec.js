@@ -1,6 +1,13 @@
 import { readFile } from 'node:fs/promises';
 import { test, expect } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+	await page.route(
+		'https://cdn.jsdelivr.net/npm/microlighter@2.2.0/dist/**',
+		(route) => route.abort(),
+	);
+});
+
 const read = (path) =>
 	readFile(new URL(`../../${path}`, import.meta.url), 'utf8');
 const source = await read('table-sortable.js');
@@ -211,6 +218,9 @@ test('all 19 palettes preserve ordinary, sorted and grouped cell contrast', asyn
 	test.setTimeout(120_000);
 	await page.setViewportSize({ width: 1400, height: 900 });
 	await demo(page);
+	await page
+		.locator('link[href^="https://cdn.jsdelivr.net/"]')
+		.evaluateAll((links) => links.forEach((link) => link.remove()));
 	const originals = await page.evaluate(() =>
 		[...document.styleSheets].map((sheet, index) => {
 			const text = [...sheet.cssRules]
@@ -502,7 +512,10 @@ test('native keyboard sorting retains names, focus, row nodes and correct numeri
 	).toBeFocused();
 	await expect(
 		host.getByRole('button', { name: 'City', exact: true }),
-	).toHaveCSS('outline-style', 'auto');
+	).toHaveCSS('outline-style', 'solid');
+	await expect(
+		host.getByRole('button', { name: 'City', exact: true }),
+	).toHaveCSS('outline-width', '3px');
 });
 
 test('group membership, inline keys and localized state descriptions survive sorting', async ({
@@ -601,7 +614,8 @@ test('forced colors retain shape indicators and native focus', async ({
 		else if (state === 'ascending') await page.keyboard.press('Space');
 	}
 	await expect(button).toHaveCSS('forced-color-adjust', 'auto');
-	await expect(button).toHaveCSS('outline-style', 'auto');
+	await expect(button).toHaveCSS('outline-style', 'solid');
+	await expect(button).toHaveCSS('outline-width', '3px');
 });
 
 test('increased contrast restores full-strength supporting text', async ({
@@ -622,7 +636,7 @@ for (const name of ['index.html', 'esm.html', 'unpkg.html']) {
 		await demo(page, name);
 		for (const pair of await page.locator('.code-demo-pair').all()) {
 			await expect(pair.locator(':scope > *')).toHaveCount(2);
-			await expect(pair.locator(':scope > pre')).toHaveCount(1);
+			await expect(pair.locator(':scope > micro-lighter')).toHaveCount(1);
 			await expect(pair.locator(':scope > .demo')).toHaveCount(1);
 		}
 		for (const width of [1400, 1024, 768, 320]) {

@@ -130,7 +130,7 @@ table:has(col:nth-child(4).sorted) tbody td:nth-child(4) {
 
 #event-messages {
 	margin-block-start: 0.5rem;
-	font-family: monospace;
+	font-family: system-monospace, monospace;
 	font-size: 0.9rem;
 }
 

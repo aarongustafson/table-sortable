@@ -4,13 +4,20 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>table-sortable via unpkg</title>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/microlighter@2.2.0/dist/themes/github.css"
+		/>
 		<link rel="stylesheet" href="./styles.css" />
+		<link rel="stylesheet" href="./demo-shell.css" />
 		<link rel="stylesheet" href="./tables.css" />
 	</head>
-	<body>
+	<body data-syntax-theme="github">
+		<a class="skip-link" href="#main">Skip to examples</a>
 		<header>
-			<h1>table-sortable via unpkg</h1>
-			<p>
+			<p class="eyebrow">Web component / unpkg</p>
+			<h1>&lt;table-sortable&gt;</h1>
+			<p class="lede">
 				This page loads the guarded definition helper from
 				<code>unpkg</code>. Importing it registers the element when
 				supported; the explicit helper call is safe to repeat. See the
@@ -20,8 +27,26 @@
 				>
 				for the API.
 			</p>
+			<nav aria-label="Component resources">
+				<a
+					href="https://github.com/aarongustafson/table-sortable/blob/main/README.md"
+					>Read the README</a
+				>
+				<a href="https://github.com/aarongustafson/table-sortable"
+					>View on GitHub</a
+				>
+				<a href="./index.html">All examples</a>
+				<a href="./esm.html">esm.sh example</a>
+			</nav>
 		</header>
-		<main>
+		<main id="main" tabindex="-1">
+			<p
+				id="microlighter-status"
+				class="enhancement-status"
+				role="status"
+				hidden
+			></p>
+
 			<section class="demo-section">
 				<h2>Automatic registration</h2>
 				<p>
@@ -31,7 +56,16 @@
 					scroll.
 				</p>
 				<div class="code-demo-pair">
-					<pre><code>&lt;script type="module"&gt;
+					<micro-lighter
+						class="code-panel"
+						language="html"
+						controls="copy"
+						data-label="HTML"
+					>
+						<pre
+							aria-label="Automatic registration code 1"
+							tabindex="0"
+						><code>&lt;script type="module"&gt;
   <mark>import { defineTableSortable } from 'https://unpkg.com/@aarongustafson/table-sortable@latest/define.js?module';</mark>
   <mark>defineTableSortable();</mark>
 &lt;/script&gt;
@@ -42,6 +76,7 @@
     &lt;!-- Plain headers and data rows --&gt;
   &lt;/table&gt;
 <mark>&lt;/table-sortable&gt;</mark></code></pre>
+					</micro-lighter>
 					<div class="demo">
 						<table-sortable
 							tabindex="0"
@@ -98,5 +133,6 @@
 
 			defineTableSortable();
 		</script>
+		<script type="module" src="./code-examples.js"></script>
 	</body>
 </html>
