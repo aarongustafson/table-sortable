@@ -1,5 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { test, expect } from '@playwright/test';
+import { expectNativeFocus } from './demo-fixture.js';
 
 test.beforeEach(async ({ page }) => {
 	await page.route(
@@ -510,12 +511,9 @@ test('native keyboard sorting retains names, focus, row nodes and correct numeri
 	await expect(
 		host.getByRole('button', { name: 'City', exact: true }),
 	).toBeFocused();
-	await expect(
+	await expectNativeFocus(
 		host.getByRole('button', { name: 'City', exact: true }),
-	).toHaveCSS('outline-style', 'solid');
-	await expect(
-		host.getByRole('button', { name: 'City', exact: true }),
-	).toHaveCSS('outline-width', '3px');
+	);
 });
 
 test('group membership, inline keys and localized state descriptions survive sorting', async ({
@@ -614,8 +612,7 @@ test('forced colors retain shape indicators and native focus', async ({
 		else if (state === 'ascending') await page.keyboard.press('Space');
 	}
 	await expect(button).toHaveCSS('forced-color-adjust', 'auto');
-	await expect(button).toHaveCSS('outline-style', 'solid');
-	await expect(button).toHaveCSS('outline-width', '3px');
+	await expectNativeFocus(button);
 });
 
 test('increased contrast restores full-strength supporting text', async ({
@@ -648,10 +645,15 @@ for (const name of ['index.html', 'esm.html', 'unpkg.html']) {
 					).toBeGreaterThanOrEqual(320);
 				}
 			}
-			await expect(page.locator('.code-demo-pair').first()).toHaveCSS(
-				'flex-direction',
-				width < 768 ? 'column' : 'row',
-			);
+			const pair = page.locator('.code-demo-pair').first();
+			await expect(pair).toHaveCSS('display', 'grid');
+			expect(
+				await pair.evaluate(
+					(pair) =>
+						getComputedStyle(pair).gridTemplateColumns.split(' ')
+							.length,
+				),
+			).toBe(width < 768 ? 1 : 2);
 			expect(
 				await page.evaluate(
 					() => document.documentElement.scrollWidth > innerWidth,

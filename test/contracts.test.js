@@ -4,6 +4,13 @@ import { lexer } from 'marked';
 
 const read = (path) => readFile(new URL(path, import.meta.url), 'utf8');
 
+it('trims block-edge margins inside demo sections', async () => {
+	const styles = await read('../demo/demo-shell.css');
+	expect(styles).toMatch(
+		/\.demo-section(?:,\s*\.api-reference)?\s*\{[^}]*\bmargin-trim:\s*block;/,
+	);
+});
+
 it('describes the real host properties, indicator hooks and registration exports', async () => {
 	const manifest = JSON.parse(await read('../custom-elements.json'));
 	const component = manifest.modules.find(
