@@ -44,13 +44,15 @@
 				hidden
 			></p>
 
-			<section class="demo-section">
+			<section class="demo-section" id="esm-class-import">
 				<h2>Class-only import and manual registration</h2>
 				<p>
 					The class import does not register an element. The captioned
 					table remains readable if JavaScript or the CDN fails; sort
 					buttons appear only after enhancement. At narrow widths,
-					focus the table region and use arrow keys to scroll.
+					focus the table region and use arrow keys to scroll. Use
+					plain-text headers: enhancement replaces their contents with
+					native buttons.
 				</p>
 				<div class="code-demo-pair">
 					<micro-lighter
@@ -72,7 +74,14 @@
 <mark>&lt;table-sortable tabindex="0" role="region" aria-label="People table"&gt;</mark>
   &lt;table&gt;
     &lt;caption&gt;People and cities&lt;/caption&gt;
-    &lt;!-- Plain headers and data rows --&gt;
+    &lt;thead&gt;
+      &lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Age&lt;/th&gt;&lt;th&gt;City&lt;/th&gt;&lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+      &lt;tr&gt;&lt;td&gt;Charlie&lt;/td&gt;&lt;td&gt;35&lt;/td&gt;&lt;td&gt;New York&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Alice&lt;/td&gt;&lt;td&gt;28&lt;/td&gt;&lt;td&gt;Boston&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Bob&lt;/td&gt;&lt;td&gt;42&lt;/td&gt;&lt;td&gt;Chicago&lt;/td&gt;&lt;/tr&gt;
+    &lt;/tbody&gt;
   &lt;/table&gt;
 <mark>&lt;/table-sortable&gt;</mark></code></pre>
 					</micro-lighter>
