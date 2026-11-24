@@ -591,7 +591,7 @@ test('forced colors retain shape indicators and native focus', async ({
 	);
 	await page.emulateMedia({ forcedColors: 'active' });
 	await demo(page);
-	const host = page.locator('table-sortable').first();
+	const host = page.locator('table-sortable.svg-sort-indicators');
 	await expect(host).toHaveClass(/svg-sort-indicators/);
 	const button = host.getByRole('button', { name: 'Name', exact: true });
 	await button.focus();

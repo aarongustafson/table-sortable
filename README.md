@@ -6,25 +6,23 @@
 [![License](https://img.shields.io/npm/l/@aarongustafson/table-sortable)](https://github.com/aarongustafson/table-sortable/blob/main/LICENSE)
 [![Type definitions](https://img.shields.io/npm/types/@aarongustafson/table-sortable)](https://github.com/aarongustafson/table-sortable/blob/main/table-sortable.d.ts)
 
-A web component to enable users to sort table data by clicking on column headers. Built with accessibility in mind, featuring keyboard navigation, native sort semantics, and light DOM manipulation.
+`<table-sortable>` adds native sort buttons to a table’s column headers.
+Readers can sort with a click, Enter, or Space. Without JavaScript, the table
+remains readable in its authored order.
 
-Based on the original [jquery.easy-sortable-tables.js](https://github.com/easy-designs/jquery.easy-sortable-tables.js) by Aaron Gustafson.
-
-## Features
-
-- ✅ **Keyboard Controls**: Native header buttons with Enter/Space activation
-- ✅ **Screen Reader Friendly**: Exposes sort changes with `aria-sort` and described buttons
-- ✅ **Light DOM**: No Shadow DOM - works with your existing table markup
-- ✅ **Flexible Sorting**: Supports text, numeric, and custom sort keys
-- ✅ **Grouped Tables**: Keeps related rows together when sorting
-- ✅ **No Dependencies**: Pure vanilla JavaScript web component
-- ✅ **Small Footprint**: Lightweight and performant
+Use plain-text headers and a regular table with one header row and matching
+data columns. The component works in light DOM and has no runtime dependencies.
 
 ## Demo
 
 - [Full Demo](https://aarongustafson.github.io/table-sortable/demo/) ([Source](./demo/index.html))
 - [unpkg CDN Demo](https://aarongustafson.github.io/table-sortable/demo/unpkg.html) ([Source](./demo/unpkg.html))
 - [esm.sh CDN Demo](https://aarongustafson.github.io/table-sortable/demo/esm.html) ([Source](./demo/esm.html))
+
+The full demo includes [custom keys](https://aarongustafson.github.io/table-sortable/demo/#product-pricing),
+[department groups](https://aarongustafson.github.io/table-sortable/demo/#department-groups),
+[French labels](https://aarongustafson.github.io/table-sortable/demo/#french-table),
+and [SVG carets](https://aarongustafson.github.io/table-sortable/demo/#svg-caret-table).
 
 ## Installation
 
@@ -36,19 +34,20 @@ npm install @aarongustafson/table-sortable
 
 > **TypeScript ready**
 >
-> The package ships with `table-sortable.d.ts`. Importing either the class (`{ TableSortableElement }`) or the guarded definition helper automatically provides typed event payloads (`table-sortable:sort`) and reflective properties (`labelSortable`, `labelAscending`, `labelDescending`).
+> The package ships with `table-sortable.d.ts`, including the sort-event
+> payload and the three reflected label properties.
 
 ### Option 1: Import the class and define manually
 
-Import the class and define the custom element with your preferred tag name:
+The main import exports the class without registering it:
 
 ```javascript
 import { TableSortableElement } from '@aarongustafson/table-sortable';
 
-customElements.define('my-custom-name', TableSortableElement);
+customElements.define('table-sortable', TableSortableElement);
 ```
 
-The shared indicator and visually hidden description styles target
+You can choose another tag name, but the shared indicator and visually hidden description styles target
 `table-sortable`. If you choose another tag, provide equivalent styles for that
 tag, including `.table-sortable-description`. The demos use the default tag.
 
@@ -85,7 +84,7 @@ You can also include the guarded script from HTML:
 
 ### Basic Example
 
-Wrap your existing table in a `<table-sortable>` element. The component uses **progressive enhancement** - it will automatically inject sortable buttons into table headers:
+After registering the component, wrap a captioned table in `<table-sortable>`:
 
 ```html
 <table-sortable tabindex="0" role="region" aria-label="People table">
@@ -121,15 +120,36 @@ Wrap your existing table in a `<table-sortable>` element. The component uses **p
 </table-sortable>
 ```
 
-Without JavaScript, or if the module fails to load, the native table remains
-readable in its authored order. After registration, initialization runs in an
-animation frame. The component replaces each `<thead>` header’s contents with a button
-using that header’s trimmed text. Use plain text headers, not existing links,
-buttons, or markup you need to preserve.
+After registration, initialization runs in an animation frame. The component
+enhances the first nested table. If there isn’t a table at initialization,
+it logs a warning; it doesn’t watch for one to be added later.
+
+The component replaces every `<thead>` header’s contents with a button using
+that header’s trimmed text. Use plain text, not links, buttons, or markup you
+need to preserve. Supply a `<thead>` with one row of `<th>` elements and
+matching cells in each `<tbody>` row. It sorts by cell position, not a
+`colspan`/`rowspan` grid, so avoid spanning cells in sortable data.
 
 The named, focusable region is authored markup, not something the component
 adds. With the overflow styles below, keyboard users can focus that region and
 scroll a wide table without losing columns.
+
+## Sorting Behavior
+
+- Activating a column sorts ascending. Activating the same column again toggles
+  descending; switching columns starts ascending again.
+- Plain cell text is trimmed and compared in uppercase. This is not
+  locale-aware collation.
+- Numeric keys use numeric comparison, so `20` comes before `100`.
+  Currency symbols, thousands separators, and localized decimals are not
+  numeric keys; supply an unformatted `data-sort-value` for them.
+- Use consistent key types within a column. Mixed numbers and nonnumeric text
+  don’t have a defined “numbers first” order.
+- Sorting moves the original row nodes, preserving their content and listeners.
+  It replaces **all** body containers, even without groups: arbitrary
+  `<tbody>` attributes, IDs, classes, and listeners are not retained.
+- Header buttons stay in place, and the activated button keeps focus. Sorting
+  doesn’t offer a third, original-order state.
 
 ## Advanced Usage
 
@@ -164,7 +184,7 @@ This is useful for:
 
 - Sorting formatted numbers (currency, percentages)
 - Sorting dates by ISO format while displaying a friendly format
-- Custom sorting logic (e.g., priority: High > Medium > Low)
+- Priority order, using numeric keys such as `1`, `2`, and `3`
 
 ### Inline Sort Keys with `data-sort-as`
 
@@ -191,6 +211,15 @@ Use a `[data-sort-as]` element to mark the visible text fragment that should lea
 ```
 
 This allows sorting by last name while still displaying the full name naturally.
+
+Key precedence is:
+
+1. A cell’s `data-sort-value`, including an empty value, wins. Text keys are
+   compared as supplied; use consistent case.
+2. Otherwise, the first descendant with `data-sort-as` supplies the leading
+   text, followed by the remaining cell text. Both parts are trimmed and
+   uppercased.
+3. Otherwise, the component uses the cell’s trimmed, uppercased text.
 
 If you need a sort token that should not be visible, you can still hide a `[data-sort-as]` element with CSS, but visible text is generally preferable to reduce duplicated content.
 
@@ -230,11 +259,13 @@ To keep related rows together while sorting, add the same
 </table-sortable>
 ```
 
-Sorting moves the original row nodes into new `<tbody>` elements. Rows with
-the same effective group value stay together. The original body attributes,
-apart from the effective group key, aren’t copied.
+Rows with the same effective group value stay together. Rows within each
+group follow the selected sort direction. Groups appear in the order their
+first row occurs in the sorted sequence—not alphabetically by the group key.
+For example, sorting Score ascending puts the group with the lowest score
+first, then keeps its other rows beside it.
 
-Use a normal `<tbody>` around the table's data rows, as shown above. You do not
+Use a normal `<tbody>` around the table’s data rows, as shown above. You don’t
 need to provide a separate `<tbody>` for each group. Separate `<tbody>` elements
 are allowed in the initial markup, but they do not define the groups; the
 `data-table-sort-group` values on the rows or inherited from a body do.
@@ -256,16 +287,22 @@ of its rows the same group:
 ```
 
 A `data-table-sort-group` value directly on a `<tr>` overrides the value
-inherited from its `<tbody>`. The component writes the effective group value to
-each generated `<tbody>` so the grouping is preserved across subsequent sorts.
+inherited from its `<tbody>`, including when the row’s value is empty. Empty
+strings form a group; rows without either attribute form a separate unkeyed
+group when keyed groups exist. Effective group keys survive subsequent sorts,
+but other body attributes don’t.
 
 ## Events
 
-The component fires custom events that you can listen to:
+The component dispatches a bubbling event on the host after sorting:
 
-| Event                 | Description                   | Detail                                                              |
-| --------------------- | ----------------------------- | ------------------------------------------------------------------- |
-| `table-sortable:sort` | Fired when a column is sorted | `{ column: number, direction: 'asc'\|'desc', header: HTMLElement }` |
+| Event                 | Description              | Detail                                                              |
+| --------------------- | ------------------------ | ------------------------------------------------------------------- |
+| `table-sortable:sort` | A column has been sorted | `{ column: number, direction: 'asc'\|'desc', header: HTMLElement }` |
+
+`column` is zero-based, and `header` is the active `<th>`. There’s no public
+sorting method; use the header buttons. See the
+[visible event example](https://aarongustafson.github.io/table-sortable/demo/#sort-event-listener).
 
 ### Example Event Handling
 
@@ -299,9 +336,11 @@ or property changes don’t update the descriptions already rendered.
 
 Cell keys (`data-sort-value` and `data-sort-as`) and row/body groups
 (`data-table-sort-group`) belong on the nested table markup, not on the host.
-An explicit cell value wins over an inline sort key, which leads the remaining
-cell text. The component doesn’t generate a caption or region label; author
-those in the table’s language too.
+The component doesn’t generate a caption or region label; author those in the
+table’s language too.
+
+Use the labels to match your application’s vocabulary or translate the
+descriptions. `lang` alone doesn’t translate them.
 
 ### Example Localization
 
@@ -328,6 +367,11 @@ The component uses light DOM, so you can style the table normally with CSS. The 
 | `up`     | `<th>`     | Column sorted in ascending order                 |
 | `down`   | `<th>`     | Column sorted in descending order                |
 | `sorted` | `<col>`    | The currently sorted column (for column styling) |
+
+The component supplies a `<colgroup>` with one `<col>` per header column if
+there isn’t one. If you author a `<colgroup>`, provide a `<col>` for each
+column. Opaque cell, row, and body backgrounds paint over column backgrounds;
+use the sorted-cell selectors below rather than relying on `col.sorted` alone.
 
 ### CSS Custom Properties
 
@@ -421,36 +465,23 @@ selectors, neutral striping, group separators, and SVG masks that follow
 `currentColor`. Browsers without mask support keep the text indicators; forced
 colors use outlined/filled Unicode caret pairs instead.
 
-The header button fills the cell without an inset border. The small specified
-table height lets percentage-sized headers and buttons follow the row’s used
-height. Table height is a minimum, so wrapped labels and data still expand
-their rows. The browser’s focus indicator is retained.
+The button fills the header cell; wrapped labels and data still expand the
+rows. Keep the browser’s focus indicator visible. The base component doesn’t
+assign text or surface colors; the example pairs system foreground and
+background colors and paints an opaque backing beneath the header gradient.
 
-The base component doesn’t assign text or surface colors. The demos pair
-`CanvasText`/`Canvas` for reading, `ButtonText`/`ButtonFace` for headers, and
-`FieldText`/`Field` for code and the event log. Translucent control and field
-surfaces have an explicit `Canvas` backing. Supporting footer text uses an 80%
-foreground mix on `Canvas`, with a full-strength fallback in forced colors and
-increased contrast. Controls and data cells aren’t faded.
-
-## Accessibility Features
-
-The component is built with accessibility as a priority:
+## Keyboard and Assistive Technology
 
 1. **Keyboard Navigation**:
    - All sortable headers are focusable with Tab
    - Activate sorting with `Enter` or `Space` keys
 
 2. **Screen Reader Support**:
-   - `aria-sort` attribute indicates column sort state (ascending, descending, none)
+   - `aria-sort` on each header indicates its state: `ascending`, `descending`, or `none`
    - Sort buttons reference customizable descriptions for their current state and next action
    - Relies on native table and `aria-sort` support rather than adding a live region, avoiding duplicate announcements in browser and assistive-technology combinations that already report sort changes
 
-3. **Progressive Enhancement**:
-   - Leaves a native readable table before enhancement or when loading fails
-   - Replaces header contents with native buttons; use plain text headers
-
-4. **Visual Indicators**:
+3. **Visual Indicators**:
    - CSS classes indicate active column and sort direction
    - Demos preserve native keyboard focus indicators
    - Arrows and `aria-sort` convey direction independently of color
@@ -458,33 +489,16 @@ The component is built with accessibility as a priority:
 
 Authors still need meaningful captions and column names, translated
 descriptions, readable color pairs, and keyboard access to overflowing tables.
-Sorting keeps the activated header button focused and moves the original data
-rows. It doesn’t move focus to a newly sorted row or add a live announcement.
+Sorting doesn’t move focus to a data row or add a live announcement.
 Test the complete authored table with your users’ browsers and assistive
 technologies; automated checks don’t establish conformance.
+
+### Disconnecting and Reconnecting
 
 Disconnecting cancels pending initialization and removes header-button
 listeners. It doesn’t restore the original headers or body structure.
 Reconnection initializes again; don’t rely on it to preserve enhanced header
 contents or apply new labels safely.
-
-## Column Highlighting
-
-The component automatically injects `<colgroup>` and `<col>` elements if they don't exist, allowing you to style entire columns. The currently sorted column receives a `.sorted` class on its corresponding `<col>` element.
-
-Opaque cell, row, and body backgrounds paint above column backgrounds. For
-striped or grouped tables, pair foreground/background colors on the actual
-sorted cells, as shown above, rather than relying on `col.sorted` alone.
-
-## Sorting Behavior
-
-- **First click**: Sort ascending
-- **Second click**: Sort descending
-- **Text sorting**: Case-insensitive alphabetical
-- **Numeric sorting**: Automatic detection and numeric comparison
-- **Mixed content**: Text values sort before or after numbers depending on direction
-
-The component automatically detects numeric values and sorts them numerically rather than alphabetically (so 100 comes after 20, not after 1).
 
 ## Browser Support
 
@@ -494,13 +508,10 @@ This component uses modern web standards:
 - ES Modules
 - ES6+ JavaScript features
 
-**Supported Browsers:**
-
-- Chrome/Edge 88+
-- Firefox 87+
-- Safari 14+
-
-For older browsers, you may need polyfills from [@webcomponents/webcomponentsjs](https://github.com/webcomponents/polyfills/tree/master/packages/webcomponentsjs).
+The browser suite runs in Playwright’s Chromium, Firefox, and WebKit engines.
+It doesn’t establish minimum Chrome, Edge, Firefox, or Safari release versions.
+The demo’s optional `:has()`, color mixing, and SVG masks have readable
+fallbacks; test the styles and indicators in the browsers you support.
 
 ## Development
 

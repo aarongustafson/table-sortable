@@ -13,9 +13,9 @@
 			<p class="eyebrow">Web component / Examples</p>
 			<h1>&lt;table-sortable&gt;</h1>
 			<p class="lede">
-				A web component to enable users to sort table data by clicking
-				on column headers. Built with accessibility in mind, supporting
-				keyboard navigation and native sort semantics. See the
+				This component adds native sort buttons to table headers. Click
+				a header, or focus its button and press Enter or Space, to sort
+				the rows. See the
 				<a
 					href="https://github.com/aarongustafson/table-sortable/blob/main/README.md"
 					>README</a
@@ -54,19 +54,27 @@
 				Space changes the sort direction.
 			</p>
 			<!-- Progressive Enhancement Example -->
-			<section>
-				<h2>Progressive Enhancement</h2>
+			<section id="basic-table">
+				<h2>Sort a captioned table</h2>
 				<p>
-					The component automatically enhances plain table headers by
-					injecting buttons. You don't need to add buttons or links to
-					your markup. This example uses decorative SVG caret pairs:
-					the active direction is filled and the other direction
-					remains outlined. The masks take the button’s foreground
-					color. Browsers without mask support keep text arrows.
+					Wrap a table in <code>&lt;table-sortable&gt;</code>. Without
+					JavaScript, it remains a readable table in its authored
+					order. After enhancement, each header becomes a button: the
+					first activation sorts ascending, and the next sorts
+					descending. Sorting Age compares numbers, not digits as
+					text.
 				</p>
 
-				<div class="demo-section">
-					<h3>Auto-Enhanced Table</h3>
+				<div class="demo-section" id="employee-directory">
+					<h3>Employee directory</h3>
+					<p>
+						Use one header row in <code>&lt;thead&gt;</code> and
+						matching data cells in <code>&lt;tbody&gt;</code>,
+						without spanning cells. The component replaces each
+						header’s contents with its trimmed plain text in a
+						button. Don’t put links, existing buttons, or markup you
+						need to preserve in those headers.
+					</p>
 					<div class="code-demo-pair">
 						<micro-lighter
 							class="code-panel"
@@ -75,9 +83,11 @@
 							data-label="HTML"
 						>
 							<pre
-								aria-label="Auto-Enhanced Table code 1"
+								aria-label="Employee directory HTML"
 								tabindex="0"
-							><code><mark>&lt;table-sortable class="svg-sort-indicators"
+							><code><mark>&lt;script type="module" src="../define.js"&gt;&lt;/script&gt;</mark>
+
+<mark>&lt;table-sortable
   tabindex="0" role="region" aria-label="Employee table"&gt;</mark>
   &lt;table&gt;
     &lt;caption&gt;Employee directory&lt;/caption&gt;
@@ -86,6 +96,7 @@
         &lt;th&gt;Name&lt;/th&gt;
         &lt;th&gt;Age&lt;/th&gt;
         &lt;th&gt;City&lt;/th&gt;
+        &lt;th&gt;Occupation&lt;/th&gt;
       &lt;/tr&gt;
     &lt;/thead&gt;
     &lt;tbody&gt;
@@ -93,15 +104,38 @@
         &lt;td&gt;Charlie Brown&lt;/td&gt;
         &lt;td&gt;35&lt;/td&gt;
         &lt;td&gt;New York&lt;/td&gt;
+        &lt;td&gt;Designer&lt;/td&gt;
       &lt;/tr&gt;
-      &lt;!-- more rows --&gt;
+      &lt;tr&gt;
+        &lt;td&gt;Alice Cooper&lt;/td&gt;
+        &lt;td&gt;28&lt;/td&gt;
+        &lt;td&gt;Boston&lt;/td&gt;
+        &lt;td&gt;Developer&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;Bob Dylan&lt;/td&gt;
+        &lt;td&gt;42&lt;/td&gt;
+        &lt;td&gt;Chicago&lt;/td&gt;
+        &lt;td&gt;Manager&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;Diana Prince&lt;/td&gt;
+        &lt;td&gt;31&lt;/td&gt;
+        &lt;td&gt;Seattle&lt;/td&gt;
+        &lt;td&gt;Engineer&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;Eve Anderson&lt;/td&gt;
+        &lt;td&gt;26&lt;/td&gt;
+        &lt;td&gt;Portland&lt;/td&gt;
+        &lt;td&gt;Designer&lt;/td&gt;
+      &lt;/tr&gt;
     &lt;/tbody&gt;
   &lt;/table&gt;
 <mark>&lt;/table-sortable&gt;</mark></code></pre>
 						</micro-lighter>
 						<div class="demo" data-demo-label="Live example">
 							<table-sortable
-								class="svg-sort-indicators"
 								tabindex="0"
 								role="region"
 								aria-label="Employee table"
@@ -154,24 +188,27 @@
 							</table-sortable>
 						</div>
 					</div>
-					<div class="note">
-						<strong>Progressive Enhancement:</strong> The component
-						automatically creates sortable buttons inside each
-						<code>&lt;th&gt;</code> element. No need to add buttons
-						or links manually!
-					</div>
+					<p class="note">
+						The caption names the table; the named, focusable region
+						and horizontal scrolling are authored here, not added by
+						the component. On narrow screens, focus the region to
+						scroll, then Tab to a header button. Sorting keeps that
+						button focused and exposes its state through
+						<code>aria-sort</code> and a description, without a
+						second live announcement.
+					</p>
 				</div>
 			</section>
 
 			<!-- Custom Sort Keys -->
-			<section>
+			<section id="custom-sort-keys">
 				<h2>Custom Sort Keys</h2>
 				<p>
 					Use the <code>data-sort-value</code> attribute to define
 					custom sort values that differ from the displayed content.
 				</p>
 
-				<div class="demo-section">
+				<div class="demo-section" id="product-pricing">
 					<h3>Product Pricing with Custom Keys</h3>
 					<div class="code-demo-pair">
 						<micro-lighter
@@ -257,23 +294,25 @@
 						</div>
 					</div>
 					<div class="note">
-						<strong>Note:</strong> The "Price" and "Stock" columns
-						use <code>data-sort-value</code>
-						to sort numerically rather than alphabetically by the
-						formatted text.
+						The “Price” and “Stock” columns use
+						<code>data-sort-value</code> to sort numerically rather
+						than alphabetically by the formatted text. An explicit
+						<code>data-sort-value</code> wins over an inline key or
+						the cell’s visible text. Keep key types and text-key
+						casing consistent within a column.
 					</div>
 				</div>
 			</section>
 
 			<!-- Inline Sort Keys -->
-			<section>
+			<section id="inline-sort-keys">
 				<h2>Inline Sort Keys</h2>
 				<p>
 					Wrap the visible text fragment you want to prioritize for
 					sorting with <code>[data-sort-as]</code>.
 				</p>
 
-				<div class="demo-section">
+				<div class="demo-section" id="sort-by-last-name">
 					<h3>Sorting by Last Name</h3>
 					<div class="code-demo-pair">
 						<micro-lighter
@@ -347,16 +386,16 @@
 						</div>
 					</div>
 					<div class="note">
-						<strong>Note:</strong> The name column sorts by last
-						name (indicated using <code>[data-sort-as]</code>) while
-						displaying "First Last" format. Hidden sort tokens are
-						optional, not required.
+						The name column compares the marked last name first,
+						then the remaining cell text. The names stay in “First
+						Last” order on screen; no hidden duplicate name is
+						needed.
 					</div>
 				</div>
 			</section>
 
 			<!-- Grouped Tables -->
-			<section>
+			<section id="grouped-tables">
 				<h2>Grouped Tables</h2>
 				<p>
 					Add the same <code>data-table-sort-group</code> value to
@@ -366,8 +405,13 @@
 					its rows.
 				</p>
 
-				<div class="demo-section">
+				<div class="demo-section" id="department-groups">
 					<h3>Department-Grouped Employee List</h3>
+					<p>
+						This excerpt gives each employee a department key. The
+						visible department names keep that relationship clear
+						before and after sorting.
+					</p>
 					<div class="code-demo-pair">
 						<micro-lighter
 							class="code-panel"
@@ -380,17 +424,17 @@
 								tabindex="0"
 							><code>&lt;tbody&gt;
   &lt;tr <mark>data-table-sort-group="engineering"</mark>&gt;
-    &lt;td&gt;Charlie Brown&lt;/td&gt;
+    &lt;td&gt;Charlie Brown &lt;span class="grouped-indicator"&gt;(Engineering)&lt;/span&gt;&lt;/td&gt;
     &lt;td&gt;85&lt;/td&gt;
     &lt;td&gt;Active&lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr <mark>data-table-sort-group="engineering"</mark>&gt;
-    &lt;td&gt;Frank Miller&lt;/td&gt;
+    &lt;td&gt;Frank Miller &lt;span class="grouped-indicator"&gt;(Engineering)&lt;/span&gt;&lt;/td&gt;
     &lt;td&gt;88&lt;/td&gt;
     &lt;td&gt;On Leave&lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr <mark>data-table-sort-group="design"</mark>&gt;
-    &lt;td&gt;Alice Cooper&lt;/td&gt;
+    &lt;td&gt;Alice Cooper &lt;span class="grouped-indicator"&gt;(Design)&lt;/span&gt;&lt;/td&gt;
     &lt;td&gt;92&lt;/td&gt;
     &lt;td&gt;Active&lt;/td&gt;
   &lt;/tr&gt;
@@ -503,45 +547,55 @@
 						<strong>Choosing where to define a group:</strong> Apply
 						<code>data-table-sort-group</code> to each
 						<code>&lt;tr&gt;</code> when, as in this example,
-						several groups share one <code>&lt;tbody&gt;</code>.
-						Alternatively, apply it to a
+						several departments share one
+						<code>&lt;tbody&gt;</code>. Alternatively, apply it to a
 						<code>&lt;tbody&gt;</code> to give all of that body's
-						rows the same group. A value directly on a row overrides
-						the body's value. When sorting, the component rebuilds
-						the <code>&lt;tbody&gt;</code> elements from these
-						effective group values; the original body structure
-						alone does not define groups. Neutral striping supports
-						reading. Department names and thicker separators
-						identify groups without relying on the supplementary
-						purple and green edge accents. The sorted column uses an
-						inverse reading pair rather than tinted text-bearing
-						cells.
+						rows the same group. A row’s value overrides the body’s.
+						Sort Score ascending: Engineering comes first because
+						Eve has the lowest score, and its other employees stay
+						beside her in score order. Descending puts Design first
+						because Grace has the highest score. Group keys don’t
+						set the department order.
 					</div>
+					<p>
+						Department names and thicker separators identify groups
+						without relying on the supplementary purple and green
+						edge accents. Neutral stripes support reading, and the
+						sorted column pairs its text and fill colors. See the
+						<a
+							href="https://github.com/aarongustafson/table-sortable/blob/main/README.md#grouped-tables"
+							>grouping reference</a
+						>
+						for precedence and body-attribute caveats.
+					</p>
 				</div>
 			</section>
 
 			<!-- Custom Labels -->
-			<section>
-				<h2>Custom Labels (Localization)</h2>
+			<section id="custom-labels">
+				<h2>Change sort descriptions</h2>
 				<p>
 					Use <code>label-sortable</code> to describe unsorted column
 					buttons. Use <code>label-ascending</code> and
 					<code>label-descending</code> to describe the active column
 					and the next available action. Set these attributes before
-					the component initializes.
+					the component initializes. These labels can match your
+					application’s vocabulary as well as another language;
+					changing <code>lang</code> alone doesn’t translate them.
 				</p>
 
-				<div class="demo-section">
+				<div class="demo-section" id="french-table">
 					<h3>French Localization</h3>
 					<div class="code-demo-pair">
 						<micro-lighter
 							class="code-panel"
 							language="html"
+							lang="fr"
 							controls="copy"
 							data-label="HTML"
 						>
 							<pre
-								aria-label="French Localization code 5"
+								aria-label="Exemple en français — code HTML"
 								tabindex="0"
 							><code><mark>&lt;table-sortable
   lang="fr" tabindex="0" role="region" aria-label="Tableau du personnel"
@@ -549,17 +603,27 @@
   label-ascending="trié croissant. Cliquer pour trier décroissant"
   label-descending="trié décroissant. Cliquer pour trier croissant"&gt;</mark>
   &lt;table&gt;
+    &lt;caption&gt;Personnel&lt;/caption&gt;
     &lt;thead&gt;
       &lt;tr&gt;
         &lt;th&gt;Nom&lt;/th&gt;
         &lt;th&gt;Âge&lt;/th&gt;
+        &lt;th&gt;Ville&lt;/th&gt;
       &lt;/tr&gt;
     &lt;/thead&gt;
-    &lt;!-- ... --&gt;
+    &lt;tbody&gt;
+      &lt;tr&gt;&lt;td&gt;Marie&lt;/td&gt;&lt;td&gt;28&lt;/td&gt;&lt;td&gt;Paris&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Pierre&lt;/td&gt;&lt;td&gt;35&lt;/td&gt;&lt;td&gt;Lyon&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Sophie&lt;/td&gt;&lt;td&gt;42&lt;/td&gt;&lt;td&gt;Marseille&lt;/td&gt;&lt;/tr&gt;
+    &lt;/tbody&gt;
   &lt;/table&gt;
 <mark>&lt;/table-sortable&gt;</mark></code></pre>
 						</micro-lighter>
-						<div class="demo" data-demo-label="Live example">
+						<div
+							class="demo"
+							data-demo-label="Exemple interactif"
+							lang="fr"
+						>
 							<table-sortable
 								lang="fr"
 								tabindex="0"
@@ -602,43 +666,23 @@
 						</div>
 					</div>
 					<div class="note">
-						<strong>Note:</strong> Each sort button references the
-						localized description for its current state and next
-						action. The active header also exposes its direction
-						through <code>aria-sort</code>.
+						Each sort button references the localized description
+						for its current state and next action. The active header
+						also exposes its direction through
+						<code>aria-sort</code>.
 					</div>
 				</div>
 			</section>
 
-			<!-- Progressive Enhancement Note -->
-			<section>
-				<h2>Progressive Enhancement</h2>
-				<p>
-					The component uses
-					<strong>pure progressive enhancement</strong>. Simply write
-					plain <code>&lt;th&gt;</code> elements in your table
-					headers, and the component automatically injects accessible
-					<code>&lt;button&gt;</code>
-					elements to make them sortable. You don't need to add any
-					buttons or links manually.
-				</p>
-				<p>
-					All examples on this page demonstrate this approach - just
-					plain
-					<code>&lt;th&gt;</code> elements that get enhanced with
-					sorting functionality.
-				</p>
-			</section>
-
 			<!-- Event Handling -->
-			<section>
+			<section id="sort-events">
 				<h2>Event Handling</h2>
 				<p>
 					Listen to the <code>table-sortable:sort</code> event to
 					react to sorting changes.
 				</p>
 
-				<div class="demo-section">
+				<div class="demo-section" id="sort-event-listener">
 					<h3>Sort Event Listener</h3>
 					<div class="code-demo-pair">
 						<micro-lighter
@@ -650,10 +694,24 @@
 							<pre
 								aria-label="Sort Event Listener code 6"
 								tabindex="0"
-							><code>element.addEventListener(<mark>'table-sortable:sort'</mark>, (event) => {
+							><code>const eventDemo = document.getElementById('event-demo');
+const eventMessages = document.getElementById('event-messages');
+let eventCount = 0;
+
+eventDemo.addEventListener(<mark>'table-sortable:sort'</mark>, (event) => {
+  eventCount++;
   const { column, direction, header } = <mark>event.detail</mark>;
   const columnName = header.querySelector('button').textContent.trim();
-  console.log(`Sorted by ${columnName} (column ${column}, ${direction})`);
+  const message = document.createElement('div');
+  message.textContent = `[${eventCount}] Sorted by "${columnName}" (column ${column}) in ${direction}ending order`;
+
+  if (eventMessages.querySelector('em')) {
+    eventMessages.replaceChildren();
+  }
+  eventMessages.prepend(message);
+  while (eventMessages.children.length &gt; 5) {
+    eventMessages.lastChild.remove();
+  }
 });</code></pre>
 						</micro-lighter>
 						<div class="demo" data-demo-label="Live example">
@@ -693,18 +751,110 @@
 								<strong>Event Log:</strong>
 								<div id="event-messages">
 									<em
-										>Click a column header to see
-										events...</em
+										>Activate a column header to see
+										events.</em
 									>
 								</div>
 							</div>
+						</div>
+					</div>
+					<p>
+						This listener shows the latest five sorts in
+						<code>#event-messages</code>. It reads the button’s
+						name, not its hidden description, and writes plain text.
+						The result isn’t a live region: the header’s state and
+						description already communicate sorting.
+					</p>
+				</div>
+			</section>
+
+			<section id="styling">
+				<h2>Style the sort indicators</h2>
+				<p>
+					The basic table uses text arrows. To choose other
+					characters, set
+					<code>--table-sortable-indicator-asc</code> and
+					<code>--table-sortable-indicator-desc</code> to quoted CSS
+					strings, such as <code>'▲'</code> and <code>'▼'</code>. See
+					the
+					<a
+						href="https://github.com/aarongustafson/table-sortable/blob/main/README.md#styling"
+						>styling reference</a
+					>
+					for legacy hooks and sorted-cell colors.
+				</p>
+				<div class="demo-section" id="svg-caret-table">
+					<h3>Use outlined and filled SVG carets</h3>
+					<p>
+						Add <code>svg-sort-indicators</code> with the rules in
+						the linked <a href="./styles.css">demo stylesheet</a>.
+						The active direction is filled; the other caret stays
+						outlined. Both follow the button’s foreground color.
+						Browsers without mask support retain text arrows, and
+						forced colors use outlined and filled text carets.
+					</p>
+					<div class="code-demo-pair">
+						<micro-lighter
+							class="code-panel"
+							language="html"
+							controls="copy"
+							data-label="HTML"
+						>
+							<pre
+								aria-label="SVG caret styling code"
+								tabindex="0"
+							><code>&lt;link rel="stylesheet" href="./styles.css"&gt;
+
+<mark>&lt;table-sortable class="svg-sort-indicators"
+  tabindex="0" role="region" aria-label="Employee age table"&gt;</mark>
+  &lt;table&gt;
+    &lt;caption&gt;Employee ages&lt;/caption&gt;
+    &lt;thead&gt;
+      &lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Age&lt;/th&gt;&lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+      &lt;tr&gt;&lt;td&gt;Charlie Brown&lt;/td&gt;&lt;td&gt;35&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Alice Cooper&lt;/td&gt;&lt;td&gt;28&lt;/td&gt;&lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+<mark>&lt;/table-sortable&gt;</mark></code></pre>
+						</micro-lighter>
+						<div class="demo" data-demo-label="Live example">
+							<table-sortable
+								class="svg-sort-indicators"
+								tabindex="0"
+								role="region"
+								aria-label="Employee age table"
+							>
+								<table>
+									<caption>
+										Employee ages
+									</caption>
+									<thead>
+										<tr>
+											<th>Name</th>
+											<th>Age</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Charlie Brown</td>
+											<td>35</td>
+										</tr>
+										<tr>
+											<td>Alice Cooper</td>
+											<td>28</td>
+										</tr>
+									</tbody>
+								</table>
+							</table-sortable>
 						</div>
 					</div>
 				</div>
 			</section>
 
 			<!-- API Reference -->
-			<section class="api-reference">
+			<section class="api-reference" id="api-reference">
 				<h2>API Reference</h2>
 				<p>
 					For complete documentation of attributes, events, and
@@ -762,17 +912,16 @@
 
 				const message = document.createElement('div');
 				message.textContent = `[${eventCount}] Sorted by "${columnName}" (column ${column}) in ${direction}ending order`;
-				message.style.marginTop = '0.25rem';
 
 				if (eventMessages.querySelector('em')) {
 					eventMessages.replaceChildren();
 				}
 
-				eventMessages.insertBefore(message, eventMessages.firstChild);
+				eventMessages.prepend(message);
 
 				// Keep only last 5 messages
 				while (eventMessages.children.length > 5) {
-					eventMessages.removeChild(eventMessages.lastChild);
+					eventMessages.lastChild.remove();
 				}
 			});
 		</script>
